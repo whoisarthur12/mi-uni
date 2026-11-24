@@ -26,6 +26,15 @@ test('el código de cada módulo está en su lista de archivos', () => {
   }
 });
 
+test('el motor PDF compartido está en la lista de algún módulo y su lista de archivos pesados coincide', () => {
+  const todos = Object.values(C.MODULES).flatMap((m) => m.files || []);
+  const motor = walk('js/engines').filter((f) => /\.m?js$/.test(f)).map((f) => f.split(path.sep).join('/'));
+  assert.deepEqual(motor.filter((f) => !todos.includes(f)), []);
+  const src = fs.readFileSync(path.join(ROOT, 'js/engines/pdf/motores.js'), 'utf8');
+  const lista = JSON.parse(src.match(/ARCHIVOS_MOTOR_PDF = (\[[\s\S]*?\]);/)[1].replace(/'/g, '"').replace(/,\s*\]/, ']'));
+  for (const f of lista) assert.ok(C.MODULES.compresor.assets.files.includes(f), f);
+});
+
 test('el manifiesto de descarga coincide con los archivos (tamaño y SHA-256)', () => {
   for (const [id, m] of Object.entries(C.MODULES)) {
     if (!m.assets) continue;

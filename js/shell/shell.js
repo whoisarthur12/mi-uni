@@ -33,6 +33,8 @@ export function iniciarShell({ version, extras = {} } = {}) {
   startRouter(window, RUTAS, async (r) => {
     const mio = ++turno;
     try { actual?.desmontar?.(); } catch (e) { diag('modulo:desmontar', { message: e.message }); }
+    // Un diálogo abierto de la pantalla anterior (p. ej., pedir contraseña) se cierra como «Cancelar».
+    for (const d of document.querySelectorAll('dialog.dialogo[open]')) d.close('no');
     actual = null;
     // Cada ruta pinta en su propio contenedor: si el usuario navega mientras una vista carga,
     // la vista vieja escribe en un nodo ya desconectado y no mezcla contenido.
