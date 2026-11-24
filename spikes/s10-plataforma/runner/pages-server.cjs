@@ -13,7 +13,7 @@ function transform(rel, buf) {
   let s = buf.toString('utf8');
   if (state.build !== 1) s = s.replace(/__BUILD_1__/g, `__BUILD_${state.build}__`).replace(/__LIGERO_1__/g, `__LIGERO_${state.build}__`);
   if (rel.endsWith('sw-config.js')) {
-    s = s.replace('const SHELL_VERSION = 1;', `const SHELL_VERSION = ${state.shellVersion};`)
+    s = s.replace(/const SHELL_VERSION = \d+;/, `const SHELL_VERSION = ${state.shellVersion};`)
       .replace("const PRECACHE_MODE = 'reload';", `const PRECACHE_MODE = '${state.precacheMode}';`)
       .replace('pesado: { version: 1,', `pesado: { version: ${state.pesadoVersion},`)
       .replace('ligero: { version: 1,', `ligero: { version: ${state.build},`);

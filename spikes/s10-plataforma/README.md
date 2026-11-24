@@ -82,29 +82,63 @@ node spikes/s10-plataforma/runner/s10install.cjs
 `runner/gen-assets.cjs` regenera `app/modules/pesado/assets.json`; `app/gen_icons.py` los íconos (Pillow).
 
 ## Probar en el iPhone (GitHub Pages)
-Base: `https://whoisarthur12.github.io/mi-uni/`. Usa **Safari** (no un navegador dentro de otra app). Al terminar cada página, pulsa **"Copiar resultados"** y pégalos en un mensaje.
 
-| Prueba | URL |
-|---|---|
-| S1 compresor (elige un PDF real) | `https://whoisarthur12.github.io/mi-uni/spikes/s1-ghostscript/` |
-| S10 CSP en workers | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/csp/` |
-| S10 mini-PWA (offline, actualización, instalación) | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/app/` |
-| S10 límites de canvas | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/canvas/` |
-| S11 almacenamiento y ZIP | `https://whoisarthur12.github.io/mi-uni/spikes/s11-almacenamiento/` |
+### URLs
+Índice con botones grandes: **https://whoisarthur12.github.io/mi-uni/**
 
-La prueba de CSP usa un servidor testigo local (`127.0.0.1:8766`) que no existe en el teléfono: allí solo sirve para ver que los workers arrancan y que nada da error; las fugas se midieron en escritorio.
+| Prueba | URL | Comprobado |
+|---|---|---|
+| Índice | `https://whoisarthur12.github.io/mi-uni/` | (a) (b) |
+| S1 · Compresor | `https://whoisarthur12.github.io/mi-uni/spikes/s1-ghostscript/` | (a) (b) (c) |
+| S10 · App (offline, instalación, actualización) | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/app/` | (a) (b) (c) |
+| S10 · Canvas | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/canvas/` | (a) (b) (c) |
+| S11 · Almacenamiento | `https://whoisarthur12.github.io/mi-uni/spikes/s11-almacenamiento/` | (a) (b) (c) |
+| S5 · Citas DOI/ISBN | `https://whoisarthur12.github.io/mi-uni/spikes/s5-citas/` | (a) (b) (c) |
 
-### Mini-PWA, paso a paso
-1. Abre `…/spikes/s10-plataforma/app/#/m/ligero` con Wi-Fi. Debe decir "Módulo ligero montado".
-2. Ve a **Pesado** → "Descargar para usar sin conexión" (15,5 MB). Debe terminar con "Descarga completa y verificada".
-3. **Instalar:** botón Compartir → "Añadir a pantalla de inicio" → Añadir. Abre la app desde el ícono.
-4. **Modo avión** activado. Desde el ícono: abre Inicio, Ligero y Pesado. Pesado debe decir "Ghostscript WASM compilado en N ms". Anota N.
-5. Repite el paso 4 en Safari (no en la app instalada), también en modo avión.
-6. Quita el modo avión. **Actualización:** cuando yo publique una versión nueva te aviso; en Ajustes pulsa "Buscar actualización" y luego "Actualizar". Debe recargar sin quedarse en la versión vieja.
-7. Envíame: modelo del iPhone, versión de iOS (Ajustes → General → Información), qué pasos fallaron y los tiempos.
+(a) El `index.html` existe en `main` (`git ls-tree origin/main`). (b) Responde 200 en el servidor que imita Pages (`runner/pages-server.cjs`, sitio bajo `/mi-uni/`). (c) Está en el artefacto que subió el despliegue de Pages de `main` del 24-nov 14:49 (log del job "build", run 45418371925).
 
-### Canvas
-Pulsa "Medir" con el tope en **8**. Si la pestaña se recarga sola o se cierra, anótalo (ese es el dato). Si termina, repite con **16**. Copia los resultados.
+**No comprobado por HTTP contra `github.io`:** ese host está bloqueado en la red del entorno del agente (ADR-009). El "File not found" que viste: los despliegues anteriores a las 14:49 fallaron (symlink roto, PR #1) o aún no incluían esas carpetas, y GitHub Pages puede servir un 404 en caché unos minutos. Además, `/mi-uni/` daba 404 porque la raíz no tenía `index.html` (ahora sí). Si persiste: recarga sin caché y comprueba en Settings → Pages que la fuente es **Deploy from a branch → `main` → `/ (root)`**.
 
-### S11
-"Medir 5 / 30 / 80 MB" → "Crear proyecto de 200 MB y exportar ZIP" (se guarda en Archivos) → "Importar ZIP" eligiendo ese archivo → "Copiar resultados" → "Borrar datos". Para la política de borrado de Safari: deja datos guardados, no abras la página ni la app 8 días y vuelve a abrirla (la página mostrará si los datos siguen).
+### Antes de empezar
+- iPhone con **Safari** (no el navegador de otra app). Anota el modelo y la versión de iOS (Ajustes → General → Información).
+- Todas las páginas terminan con **«Copiar resultados»**: pega cada resultado en un mensaje, indicando de qué página es.
+- Solo **S5** usa internet, y solo cuando pulsas «Buscar DOI» o «Buscar ISBN».
+
+### 1. S10 · App: instalación PWA, modo avión y actualización
+1. Con Wi-Fi, abre `…/spikes/s10-plataforma/app/#/m/ligero`. Debe decir «Módulo ligero montado».
+2. Toca **Pesado** → «Descargar para usar sin conexión» (15,5 MB). Espera a «Descarga completa y verificada».
+3. **Instala:** botón Compartir → «Añadir a pantalla de inicio» → Añadir.
+4. Activa el **modo avión**. Abre la app desde el ícono y visita Inicio, Ligero y Pesado. Pesado debe decir «Ghostscript WASM compilado en N ms»: anota N.
+5. Sigue en modo avión y repite el paso 4 en Safari (no en la app instalada).
+6. Quita el modo avión. Ve a **Ajustes → «Buscar actualización»**. Cuando yo te avise de una versión nueva, debe aparecer «Hay una versión nueva — Actualizar». Púlsalo: debe recargar sin quedarse en la versión vieja.
+7. Pulsa **«Copiar resultados»** (abajo de todo): copia el estado del service worker, las cachés, si está instalada y lo que mostraron Ligero y Pesado. Hazlo en la app instalada y en Safari. Añade qué pasos fallaron.
+
+### 2. S10 · Canvas
+1. Abre `…/spikes/s10-plataforma/canvas/`, elige el tope **8** y pulsa «Medir».
+2. Si la pestaña se recarga o se cierra sola, anótalo: ese es el dato.
+3. Si termina, repite con el tope **16**.
+4. Pulsa **«Copiar resultados»**.
+
+### 3. S11 · Almacenamiento y respaldo
+1. Abre `…/spikes/s11-almacenamiento/`. Deja el trozo en **8 MB**.
+2. Pulsa «Medir 5 / 30 / 80 MB».
+3. Pulsa «Crear proyecto de 200 MB y exportar ZIP» y guarda el ZIP en Archivos.
+4. Pulsa «Importar ZIP» y elige ese archivo.
+5. Pulsa **«Copiar resultados»** y luego «Borrar datos».
+6. **Prueba de borrado de Safari:** crea otro proyecto y no borres los datos. No abras la página ni la app durante **8 días**. Al volver a abrirla, la primera línea dice qué datos siguen guardados. Copia los resultados.
+7. **Opcional:** repite los pasos 1–3 en una pestaña privada y anota el mensaje que aparece.
+
+### 4. S5 · Citas y DOI/ISBN (usa internet)
+1. Abre `…/spikes/s5-citas/` y pulsa «Medir 100 referencias».
+2. Escribe `10.1038/nature12373` y pulsa «Buscar DOI». Revisa el formulario y pulsa «Guardar referencia».
+3. Escribe `978-84-376-0494-7` y pulsa «Buscar ISBN». Corrige el autor a apellidos «García Márquez», nombre «Gabriel», y guarda.
+4. Pulsa «Entrada manual», elige «Página web», escribe un autor y un título, y guarda sin fecha. Debe pedirte la fecha de consulta; ponla y guarda.
+5. Con el modo avión activado, pulsa «Buscar DOI»: debe mostrar un error claro y dejarte usar la entrada manual.
+6. Pulsa **«Copiar resultados»**.
+
+### 5. S1 · Compresor
+1. Abre `…/spikes/s1-ghostscript/` y elige un PDF pesado tuyo (no sale del teléfono).
+2. Prueba 150 DPI / calidad 60.
+3. Pulsa **«Copiar resultados»**.
+
+Todo lo anterior queda **pendiente de dispositivo** hasta recibir tus resultados.

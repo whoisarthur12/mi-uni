@@ -1,0 +1,12 @@
+:root { --fg: #111; --bg: #fff; --muted: #555; --accent: #1d4ed8; --card: #eef2ff; }
+@media (prefers-color-scheme: dark) { :root { --fg: #eee; --bg: #121212; --muted: #aaa; --accent: #8ab4ff; --card: #1e2433; } }
+body { margin: 0; padding: 16px; font: 18px/1.45 system-ui, -apple-system, sans-serif; color: var(--fg); background: var(--bg); }
+main { max-width: 640px; margin: 0 auto; }
+h1 { font-size: 1.5rem; }
+nav { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+.btn { display: flex; flex-direction: column; min-height: 64px; justify-content: center; padding: 14px 18px; border-radius: 12px; background: var(--card); color: var(--accent); text-decoration: none; border: 2px solid var(--accent); }
+.btn span { font-weight: 600; font-size: 1.1rem; }
+.btn small { color: var(--muted); font-size: 0.9rem; margin-top: 2px; }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+a { color: var(--accent); }
