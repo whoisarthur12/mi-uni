@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; style-src 'self'; img-src 'self' data: blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="build" content="__BUILD_1__">
+<title>Mi Uni — spike S10</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./style.css">
+<script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<header>
+  <nav aria-label="Principal">
+    <a href="#/">Inicio</a> <a href="#/m/ligero">Ligero</a> <a href="#/m/pesado">Pesado</a> <a href="#/ajustes">Ajustes</a>
+  </nav>
+  <div id="update" class="banner" hidden role="status">
+    Hay una versión nueva. <button id="apply-update" type="button">Actualizar</button>
+  </div>
+</header>
+<main id="view" tabindex="-1"></main>
+<p id="status" class="muted" aria-live="polite"></p>
+</body>
+</html>

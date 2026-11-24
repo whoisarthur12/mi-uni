@@ -1,0 +1,21 @@
+{
+  "module": "pesado",
+  "version": 1,
+  "files": [
+    {
+      "path": "index.js",
+      "size": 567,
+      "sha256": "bbee76cc86e5ccc818e188dcc9f15bd92a853ca83587705ef9f65d6109d1086c"
+    },
+    {
+      "path": "../../../../../js/vendor/ghostpdl-wasm-1.1.0/gs.wasm",
+      "size": 15533045,
+      "sha256": "e8aaf3af75da65fe0af8d49b30fa717e4ff13eedbbdc0cdd5700f54fb8f667e6"
+    },
+    {
+      "path": "../../../../../js/vendor/ghostpdl-wasm-1.1.0/gs.js",
+      "size": 38034,
+      "sha256": "5e7e3b3dfc7afc5e60de8dd6dab66145c75afb74f7d671f711f390b3bb69c6d0"
+    }
+  ]
+}
