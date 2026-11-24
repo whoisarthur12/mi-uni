@@ -45,13 +45,13 @@
 2. La CSP `<meta>` bloquea `<style>` inline (`default-src 'self'`): el CSS debe ir en archivos o se añade `style-src 'self'` explícito.
 
 ## Riesgos y condiciones
-- **RAM:** el proceso de Chromium sube **+350 a +480 MB** sobre la base con el PDF de 80 MB. En un celular de gama media con 3–4 GB es arriesgado: hay que medirlo en el dispositivo y fijar un **tope de tamaño de entrada** (propuesta: aviso > 60 MB, procesar por partes con `-sPageList` > 100 MB).
+- **RAM (corregido tras medición por trabajo):** init ≈ 70 MB; un trabajo de 80 MB ≈ **+192 MB**. La columna «Pico RSS» de la tabla es **acumulada** (varias corridas en el mismo worker; 3×80 MB = +395 MB porque la memoria WASM no se devuelve). Política por dispositivo, worker nuevo por pasada y análisis de "procesar por partes": **[ADR-003](../../docs/decisions/ADR-003-tope-memoria-compresor.md)**, implementada en `memory-policy.js` (6 pruebas en `test/`).
 - **CPU:** un celular será probablemente 3–6× más lento (estimación, **no medido**). Con 80 MB eso daría ~12–25 s por pasada, lo que obliga a estimar por muestra en la búsqueda binaria.
 - Los fixtures son sintéticos y homogéneos: la calibración de la escala de agresividad necesita **PDFs reales**.
 - La primera descarga son 11 MB (gzip). Hay que confirmar que GitHub Pages sirve `.wasm` comprimido (no se pudo probar sin desplegar).
 
 ## Decisión recomendada
-Usar `@okathira/ghostpdl-wasm` 1.1.0 vendorizado en `js/vendor/ghostpdl-wasm-1.1.0/` ([ADR-002](../../docs/decisions/ADR-002-ghostscript-wasm.md)). Worker dedicado que se **termina tras cada trabajo**; búsqueda binaria con estimación por `-sPageList` y confirmación completa; cancelación por `terminate()`.
+Usar `@okathira/ghostpdl-wasm` 1.1.0 vendorizado en `js/vendor/ghostpdl-wasm-1.1.0/` ([ADR-002](../../docs/decisions/ADR-002-ghostscript-wasm.md)). **Un worker nuevo por cada pasada de Ghostscript**, terminado al acabar; búsqueda binaria con estimación por `-sPageList` y confirmación completa; cancelación por `terminate()`.
 
 ## Cómo reproducir
 ```bash

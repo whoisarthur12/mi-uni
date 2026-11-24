@@ -2,3 +2,6 @@ node_modules/
 spikes/**/fixtures-gen/
 *.log
 .DS_Store
+# Archivos reales del dueño: nunca al repo
+tests/real/*
+!tests/real/README.md

@@ -14,3 +14,7 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S1 compresor | sint-foto-80mb.pdf [SINT] | 300 / 85 | 12,60 MB (0,158) | 6,16 s | 705 MB | CI-headless | |
 | S1 compresor | sint-foto-80mb.pdf [SINT] | 72 / 40 | 0,74 MB (0,009) | 3,38 s | 829 MB | CI-headless | |
 | S1 estimación | sint-foto-80mb.pdf [SINT] | -sPageList=1,6,11 | error 0,2–0,6 % | ~29 % del tiempo completo | — | Node 22 | Fixture homogéneo: error real será mayor |
+| S1 memoria | sint-foto-80mb.pdf [SINT] | worker iniciado, 1 trabajo | +192–194 MB pico | 4,4 s | init aparte +70 MB | CI-headless | Delta por trabajo (ADR-003) |
+| S1 memoria | sint-foto-80mb.pdf [SINT] ×3 | mismo worker | +395 MB pico | — | — | CI-headless | Acumula: un worker por pasada |
+| S1 memoria | sint-foto-30mb.pdf / 5mb [SINT] | 1 trabajo | +83–86 / +40–48 MB | 2,0 / 0,7 s | — | CI-headless | |
+| S1 memoria | split pdf-lib 80 MB en 4 | Node | maxRSS 200 MB (gs completo 204) | 0,29 s | — | Node 22 | Trocear no ahorra memoria |

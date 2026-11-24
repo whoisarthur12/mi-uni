@@ -62,6 +62,13 @@ window.__spike = {
   compress: async (url, dpi, quality) => { const b = await (await fetch(url)).arrayBuffer(); const { row } = await compress(url.split('/').pop(), b, dpi, quality); return row; },
   probeWorkerNet: (url) => call('probe-network', { url }),
   probePageNet: async (url) => { try { await fetch(url, { mode: 'no-cors' }); return { reached: true }; } catch (e) { return { reached: false, error: String(e) }; } },
+  compressFile: async (url, dpi, quality) => {
+    const blob = await (await fetch(url)).blob(); // Blob respaldado en disco/fuera del heap JS
+    const file = new File([blob], url.split('/').pop(), { type: 'application/pdf' });
+    const t0 = performance.now(); const r = await call('compress-file', { file, dpi, quality });
+    return { name: file.name, outMB: +(r.bytes.byteLength / 1e6).toFixed(3), runMs: r.runMs, totalMs: Math.round(performance.now() - t0) };
+  },
+  terminate: () => { worker?.terminate(); worker = null; },
   cancelDuring: async (url) => {
     const b = await (await fetch(url)).arrayBuffer();
     const p = call('compress', { bytes: b, dpi: 150, quality: 60 }, [b]).then(() => 'terminó', (e) => e.message);

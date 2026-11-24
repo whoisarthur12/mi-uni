@@ -42,6 +42,23 @@ self.onmessage = async ({ data }) => {
       const out = gs.FS.readFile('/out.pdf');
       gs.FS.unlink('/out.pdf'); gs.FS.unlink('/in.pdf');
       self.postMessage({ type: 'done', id, payload: { ...init, runMs, bytes: out.buffer } }, [out.buffer]);
+    } else if (type === 'compress-file') {
+      // Variante de bajo consumo: recibe el File (no se copia al clonarlo), lee una vez y
+      // cede el búfer a MEMFS con canOwn=true para evitar una segunda copia.
+      const init = await ensureGs();
+      const u8 = new Uint8Array(await payload.file.arrayBuffer());
+      const stream = gs.FS.open('/in.pdf', 'w');
+      gs.FS.write(stream, u8, 0, u8.length, 0, true);
+      gs.FS.close(stream);
+      current = { id, pages: 0 }; lastLines = [];
+      const t0 = performance.now();
+      const code = gs.callMain(buildArgs(payload));
+      const runMs = Math.round(performance.now() - t0);
+      current = null;
+      if (code !== 0) throw new Error(`Ghostscript terminó con código ${code}: ${lastLines.join(' | ')}`);
+      const out = gs.FS.readFile('/out.pdf');
+      gs.FS.unlink('/out.pdf'); gs.FS.unlink('/in.pdf');
+      self.postMessage({ type: 'done', id, payload: { ...init, runMs, bytes: out.buffer } }, [out.buffer]);
     } else if (type === 'probe-network') {
       // ¿Restringe la CSP <meta> del documento las peticiones de un worker? (Pages no envía cabeceras CSP)
       try { const r = await fetch(payload.url, { mode: 'no-cors' }); self.postMessage({ type: 'done', id, payload: { reached: true, status: r.type } }); }
