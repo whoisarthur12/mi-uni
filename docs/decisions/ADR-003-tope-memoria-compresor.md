@@ -1,6 +1,7 @@
 # ADR-003 — Tope de memoria del compresor por dispositivo
 
 - **Estado:** **aceptada** por el dueño (24-nov-2026). Modelo medido en escritorio; **se recalibra con el iPhone del dueño** antes de dar el Compresor por terminado (ADR-011).
+- **Implementación (Fase 1, bloque 4):** `js/core/memoria-modelo.js` (lógica pura con pruebas; mismos límites que S1) y `js/core/memoria.js` (dispositivo, marca de trabajo en `sessionStorage` y aprendizaje de cierres en `localStorage`). Lo usa el Compresor; la Caja PDF usará el modelo 8× de ADR-010. Medido en escritorio con el Compresor: pico de +200 a +288 MB al comprimir 80 MB (modelo: 393 MB). **Sin recalibrar: falta el iPhone.**
 - **Contexto:** el dueño pidió definir qué hace la app en móvil con PDFs grandes. INSTRUCTIONS §2: no superar ~1/3 de la RAM y avisar antes de que el navegador cierre la pestaña.
 
 ## Mediciones (S1, Chromium headless, delta de RSS de todos los procesos del navegador)

@@ -17,7 +17,8 @@ Estado: **Fase 1 mínima** (ADR-011). App: `https://whoisarthur12.github.io/mi-u
 | `css/ui.css` | ui-kit: tokens y componentes de la maqueta aprobada (ADR-013) |
 | `js/app.js`, `js/shell/` | Router por hash, cabecera, pestañas, vistas y catálogo de herramientas |
 | `js/core/` | Núcleo: `router`, `net-guard` (única salida de red: solo el propio sitio), `workers` (única fábrica de workers: `blob:` + `lockdown`), `offline`, `sw-client`, `theme`, `db` (IndexedDB versionada), `ajustes` (perfil), `proyectos` + `zip` + `respaldo` (ADR-006), `dialogo`, `hooks` (eventos, diagnóstico y buscador mínimos) |
-| `js/modules/<id>/` | Herramientas; se cargan con `import()` al abrirlas |
+| `js/engines/pdf/` | Motor PDF compartido (ADR-010): único punto que importa pdf.js y @cantoo/pdf-lib; apertura con permiso, guardas, pesos por página |
+| `js/modules/<id>/` | Herramientas; se cargan con `import()` al abrirlas. **Compresor:** `js/modules/compresor/` ([`docs/compresor.md`](docs/compresor.md)) |
 | `js/vendor/` | Dependencias fijadas (versiones en `js/vendor/VERSIONS.md`) |
 
 ## Pruebas
@@ -36,6 +37,16 @@ node tests/ui/ajustes.e2e.cjs
 ```bash
 node tests/ui/proyectos.e2e.cjs chromium,firefox,webkit --grande
 ```
+```bash
+FX_S12=/tmp/s12fx FX_S1=/tmp/s1fx node tests/ui/compresor.e2e.cjs
+```
+(PDFs sintéticos: `python3 -I spikes/s12-pdf/gen_fixtures.py /tmp/s12fx` y `python3 -I spikes/s1-ghostscript/gen_fixtures.py /tmp/s1fx`. Nunca PDFs del usuario.)
+
+## Puntos de enganche (ADR-011, bloque 5)
+El buscador completo, la pantalla de diagnóstico y el catálogo completo de eventos llegan **después del Compresor y antes del lanzamiento público**. Ya existen sus puntos de enganche en `js/core/hooks.js`, y el código los usa:
+- **Eventos:** `publicar(tipo, {ids…})` / `suscribir(tipo, fn)`. Hoy se publican `proyecto:creado`, `documento:generado` (al guardar en un proyecto), `perfil:cambiado` y `compresor:resultado`.
+- **Diagnóstico local:** `diag(tipo, datos)` guarda en memoria, sin red, las rutas, los errores del SW, las descargas sin conexión, los cierres de pestaña detectados (ADR-003) y el resultado o error de cada compresión (tamaños, pasadas, ms). `diagnostico()` devuelve el registro.
+- **Buscador:** `buscar(texto, elementos)`, sin distinguir tildes; hoy filtra las herramientas de Inicio.
 ```bash
 node tools/auditar.cjs tests/ui/app.auditoria.cjs
 ```
