@@ -1,34 +1,209 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
-<title>Mi Uni — Elige una dirección de diseño</title>
-<link rel="stylesheet" href="../pruebas.css">
-<link rel="stylesheet" href="./elegir.css">
+<meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1915" media="(prefers-color-scheme: dark)">
+<title>Inicio — Mi Uni (diseño)</title>
+<link rel="preload" href="../js/vendor/inter-4.001/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./app.css">
+<script type="module" src="./app.js"></script>
 </head>
 <body>
-<main>
-<h1>Elige una dirección de diseño</h1>
-<p>Son tres propuestas con <strong>el mismo contenido</strong>: inicio, compresor, proyectos y ajustes. Lo que cambia es el aspecto. Los datos son de ejemplo y nada funciona de verdad, salvo la navegación, el tema y una compresión simulada.</p>
-<nav aria-label="Direcciones de diseño">
-  <a class="btn dir dir-a" href="./a/#inicio"><span>A · Cuaderno</span><small>Papel cálido, títulos con serifa, listas tranquilas. Sobria y académica.</small></a>
-  <a class="btn dir dir-b" href="./b/#inicio"><span>B · Panel</span><small>Como una app del iPhone: tarjetas con iconos de color, cuadrícula de herramientas.</small></a>
-  <a class="btn dir dir-c" href="./c/#inicio"><span>C · Contraste</span><small>Blanco y negro con un amarillo de señal, letra grande. La más legible al sol.</small></a>
-</nav>
-<h2>Qué mirar en cada una</h2>
-<ol>
-  <li>En <strong>Inicio</strong>, ¿encuentras rápido «Comprimir PDF» y entiendes el aviso de respaldo?</li>
-  <li>Entra en <strong>Comprimir PDF</strong> y pulsa «Comprimir»: ¿se entiende el progreso y el resultado?</li>
-  <li>Prueba <strong>Proyectos</strong> y <strong>Ajustes</strong> en la barra de abajo.</li>
-  <li>Cambia el tema arriba a la derecha (<strong>Sistema → Claro → Oscuro</strong>) y mira los dos.</li>
-  <li>Opcional: en Ajustes del iPhone sube el tamaño de texto y vuelve a mirarla.</li>
-</ol>
-<p>Al terminar, pulsa «Copiar resultados» en la que prefieras y dime cuál eliges (o qué mezclarías: por ejemplo, «B con los títulos de A»).</p>
-<p class="muted"><a href="../">← Páginas de prueba de la Fase 0</a></p>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera">
+  <a class="volver" href="#inicio" data-solo="comprimir">
+    <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span>Inicio</span>
+  </a>
+  <p class="marca" data-no="comprimir">Mi Uni</p>
+  <button class="pildora pildora-borde tema" type="button" aria-label="Tema: sistema. Cambiar tema">
+    <svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <span class="tema-texto">Sistema</span>
+  </button>
+</header>
+
+<main id="contenido" tabindex="-1">
+
+<!-- INICIO -->
+<section class="vista" data-vista="inicio" aria-labelledby="t-inicio">
+  <h1 class="par" id="t-inicio">Hola. <span class="suave">Tus herramientas de la universidad, en este teléfono.</span></h1>
+
+  <div class="aviso" role="status">
+    <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg>
+    <div class="aviso-cuerpo">
+      <p class="aviso-titulo">Cambios sin respaldar</p>
+      <p class="suave">«Tesis, capítulo 2» lleva 9 días sin copia. Si el navegador borra sus datos, se perderían.</p>
+      <a class="pildora pildora-sec" href="#proyectos">Respaldar ahora</a>
+    </div>
+  </div>
+
+  <label class="buscar">
+    <span class="sr">Buscar herramienta o proyecto</span>
+    <svg class="ic ic-20" aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>
+    <input type="search" placeholder="Buscar" autocomplete="off" enterkeyhint="search">
+  </label>
+
+  <h2 class="titulo-seccion">Herramientas</h2>
+  <ul class="rejilla" role="list">
+    <li><a class="tarjeta tarjeta-activa" href="#comprimir">
+      <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 2.5h8.5L19 7v14.5H6z"/><path d="M14 2.5V7h5M9.5 12.5l3 3 3-3M12.5 9v6.5"/></svg>
+      <span class="tarjeta-titulo">Comprimir PDF</span>
+      <span class="tarjeta-desc">Para que quepa en el correo o la plataforma.</span>
+      <span class="enlace">Abrir <svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+    </a></li>
+    <li><div class="tarjeta tarjeta-pronto">
+      <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>
+      <span class="tarjeta-titulo">Unir y ordenar PDF</span>
+      <span class="tarjeta-desc">Junta archivos y cambia el orden de las páginas.</span>
+      <span class="pronto">Próximamente</span>
+    </div></li>
+    <li><div class="tarjeta tarjeta-pronto">
+      <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4.5h10.5A3.5 3.5 0 0119 8v12H8.5A3.5 3.5 0 015 16.5z"/><path d="M9 9h6M9 13h6"/></svg>
+      <span class="tarjeta-titulo">Citas y bibliografía</span>
+      <span class="tarjeta-desc">APA 7 a partir de un DOI o un ISBN.</span>
+      <span class="pronto">Próximamente</span>
+    </div></li>
+    <li><div class="tarjeta tarjeta-pronto">
+      <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 2.5h12v19H6z"/><path d="M9 7.5h6M9 11.5h6M9 15.5h3"/></svg>
+      <span class="tarjeta-titulo">Portadas</span>
+      <span class="tarjeta-desc">Con los datos de tu perfil y tu curso.</span>
+      <span class="pronto">Próximamente</span>
+    </div></li>
+  </ul>
+
+  <h2 class="titulo-seccion">Proyectos recientes</h2>
+  <ul class="lista" role="list">
+    <li class="fila-proy"><a href="#proyectos"><span class="fila-nombre">Tesis, capítulo 2</span><span class="marca-estado alerta">Sin copia hace 9 días</span></a></li>
+    <li class="fila-proy"><a href="#proyectos"><span class="fila-nombre">Informe de laboratorio 3</span><span class="marca-estado ok">Copia de hoy</span></a></li>
+  </ul>
+</section>
+
+<!-- COMPRESOR -->
+<section class="vista" data-vista="comprimir" aria-labelledby="t-comprimir" hidden>
+  <h1 class="par" id="t-comprimir">Comprimir PDF. <span class="suave">El archivo no sale de este teléfono.</span></h1>
+
+  <div class="archivo">
+    <svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 2.5h8.5L19 7v14.5H6z"/><path d="M14 2.5V7h5"/></svg>
+    <span class="archivo-texto"><span class="archivo-nombre">Informe_final.pdf</span><span class="suave pequeno">28,4 MB · 12 páginas</span></span>
+    <button type="button" class="pildora pildora-sec">Cambiar</button>
+  </div>
+
+  <fieldset class="opciones">
+    <legend class="titulo-seccion">¿Dónde lo vas a enviar?</legend>
+    <label class="opcion"><input type="radio" name="meta" value="5" checked><span><span class="opcion-titulo">Correo o plataforma</span><span class="suave pequeno">Menos de 5 MB</span></span></label>
+    <label class="opcion"><input type="radio" name="meta" value="10"><span><span class="opcion-titulo">Con más calidad</span><span class="suave pequeno">Menos de 10 MB</span></span></label>
+    <label class="opcion"><input type="radio" name="meta" value="min"><span><span class="opcion-titulo">Lo más pequeño posible</span><span class="suave pequeno">Puede verse peor</span></span></label>
+  </fieldset>
+
+  <button type="button" class="pildora pildora-prim ancho" id="comprimir">Comprimir</button>
+
+  <div class="progreso" id="progreso" hidden>
+    <p aria-live="polite">Comprimiendo página <span id="pag">0</span> de 12</p>
+    <div class="pista" role="progressbar" aria-label="Progreso de la compresión" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0"><span id="relleno"></span></div>
+    <button type="button" class="pildora pildora-sec" id="cancelar">Cancelar</button>
+  </div>
+
+  <div class="ventana" id="resultado" hidden tabindex="-1" aria-labelledby="t-resultado">
+    <div class="ventana-barra"><span class="ventana-puntos" aria-hidden="true"></span><span id="t-resultado">Resultado</span></div>
+    <div class="ventana-cuerpo">
+      <p class="cifra"><span class="suave tachado">28,4 MB</span> <svg class="ic ic-20" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg><span class="sr">ahora pesa</span> 4,6 MB</p>
+      <p class="suave">84 % más liviano. Tiene las mismas 12 páginas que el original.</p>
+      <div class="acciones">
+        <button type="button" class="pildora pildora-prim">Guardar</button>
+        <button type="button" class="pildora pildora-sec">Compartir</button>
+        <button type="button" class="pildora pildora-sec">Añadir a un proyecto</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROYECTOS -->
+<section class="vista" data-vista="proyectos" aria-labelledby="t-proyectos" hidden>
+  <h1 class="par" id="t-proyectos">Proyectos. <span class="suave">Se guardan solo aquí: respáldalos.</span></h1>
+
+  <div id="con-proyectos">
+    <ul class="pila" role="list">
+      <li class="tarjeta tarjeta-proy">
+        <span class="tarjeta-titulo">Tesis, capítulo 2</span>
+        <span class="suave pequeno">6 archivos · 84 MB · última copia el 15 de noviembre</span>
+        <span class="marca-estado alerta">Cambios sin respaldar hace 9 días</span>
+        <button type="button" class="pildora pildora-prim">Respaldar en ZIP</button>
+      </li>
+      <li class="tarjeta tarjeta-proy">
+        <span class="tarjeta-titulo">Informe de laboratorio 3</span>
+        <span class="suave pequeno">2 archivos · 5 MB · última copia hoy</span>
+        <span class="marca-estado ok">Al día</span>
+      </li>
+    </ul>
+    <div class="acciones-fila">
+      <button type="button" class="pildora pildora-sec">Nuevo proyecto</button>
+      <button type="button" class="pildora pildora-sec">Importar ZIP</button>
+    </div>
+    <p><button type="button" class="enlace enlace-boton" id="ver-vacio">Ver la pantalla sin proyectos <svg class="ic ic-16" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button></p>
+  </div>
+
+  <div class="vacio" id="sin-proyectos" hidden>
+    <svg class="paisaje" aria-hidden="true" viewBox="0 0 320 140" preserveAspectRatio="xMidYMax slice">
+      <rect class="cielo" width="320" height="140"/>
+      <path class="cerro-lejos" d="M0 96 C40 70 70 74 104 86 S170 62 210 74 S280 92 320 70 V140 H0z"/>
+      <path class="cerro-cerca" d="M0 116 C50 98 90 104 140 112 S230 96 320 108 V140 H0z"/>
+    </svg>
+    <p class="vacio-titulo">Todavía no hay proyectos.</p>
+    <p class="suave">Un proyecto junta los archivos de un trabajo: borradores, PDFs y fuentes.</p>
+    <button type="button" class="pildora pildora-prim ancho">Crear proyecto</button>
+    <button type="button" class="pildora pildora-sec ancho">Importar desde ZIP</button>
+    <p><button type="button" class="enlace enlace-boton" id="ver-lista">Volver a la lista de ejemplo</button></p>
+  </div>
+</section>
+
+<!-- AJUSTES -->
+<section class="vista" data-vista="ajustes" aria-labelledby="t-ajustes" hidden>
+  <h1 class="par" id="t-ajustes">Ajustes. <span class="suave">Se aplican en todas las herramientas.</span></h1>
+
+  <h2 class="titulo-seccion">Tema</h2>
+  <div class="segmentos" role="radiogroup" aria-label="Tema">
+    <button type="button" role="radio" data-tema="sistema">Sistema</button>
+    <button type="button" role="radio" data-tema="claro">Claro</button>
+    <button type="button" role="radio" data-tema="oscuro">Oscuro</button>
+  </div>
+
+  <h2 class="titulo-seccion">Perfil</h2>
+  <div class="grupo">
+    <label class="campo"><span>Nombre</span><input type="text" placeholder="Tu nombre" autocomplete="name"></label>
+    <label class="campo"><span>Universidad</span><input type="text" placeholder="Tu universidad" autocomplete="organization"></label>
+  </div>
+
+  <h2 class="titulo-seccion">Formato de trabajos</h2>
+  <div class="grupo">
+    <label class="campo"><span>Estilo de cita</span><select><option>APA 7 (provisional)</option><option>IEEE</option><option>MLA</option></select></label>
+    <label class="campo"><span>Papel</span><select><option>Carta</option><option>A4</option></select></label>
+    <label class="campo"><span>Márgenes</span><select><option>2,54 cm</option><option>3 cm</option></select></label>
+  </div>
+
+  <h2 class="titulo-seccion">Datos en este teléfono</h2>
+  <div class="grupo">
+    <p class="dato"><span>Espacio usado</span><span class="suave">89 MB</span></p>
+    <p class="dato"><span>Avisar si no hay copia en</span><span class="suave">7 días</span></p>
+  </div>
+</section>
+
+<footer class="pie">
+  <p class="suave pequeno">Maqueta de diseño. Los datos son de ejemplo; solo funcionan la navegación, el tema y una compresión simulada.</p>
+  <a class="enlace" href="../">Páginas de prueba de la Fase 0</a>
+  <button type="button" class="pildora pildora-sec" id="copiar">Copiar resultados</button>
+  <p id="copiado" class="pequeno" role="status" hidden>Copiado.</p>
+</footer>
 </main>
+
+<nav class="pestanas" aria-label="Secciones">
+  <a href="#inicio" data-pest="inicio"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M3.5 10.5L12 3.5l8.5 7V20.5h-5.5v-6h-6v6H3.5z"/></svg><span>Inicio</span></a>
+  <a href="#proyectos" data-pest="proyectos"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h6.5l2 2H21v12H3z"/></svg><span>Proyectos</span></a>
+  <a href="#ajustes" data-pest="ajustes"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span>Ajustes</span></a>
+</nav>
 </body>
 </html>
