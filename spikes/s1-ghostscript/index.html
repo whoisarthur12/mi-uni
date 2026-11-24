@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; img-src 'self' data: blob:; object-src 'none'; base-uri 'none'">
+<title>Spike S1 — Ghostscript WASM</title>
+<style>
+  body{font:16px/1.4 system-ui,sans-serif;margin:16px;max-width:900px}
+  table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #ccc;padding:4px 6px;text-align:right}
+  th:first-child,td:first-child{text-align:left} button,input,select{min-height:44px;font-size:16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+</style>
+</head>
+<body>
+<h1>Spike S1 — Ghostscript WASM</h1>
+<p>Página de medición descartable. El PDF se procesa <strong>solo en este dispositivo</strong>.</p>
+<div class="row">
+  <input type="file" id="file" accept="application/pdf">
+  <label>DPI <select id="dpi"><option>300</option><option>200</option><option selected>150</option><option>100</option><option>72</option></select></label>
+  <label>Calidad <select id="q"><option>85</option><option>70</option><option selected>60</option><option>50</option><option>40</option></select></label>
+  <button id="run">Comprimir</button>
+  <button id="cancel" disabled>Cancelar</button>
+</div>
+<p id="status" aria-live="polite"></p>
+<table><thead><tr><th>Archivo</th><th>Entrada MB</th><th>DPI/Q</th><th>Salida MB</th><th>Ratio</th><th>Init ms</th><th>Run ms</th><th>Total ms</th><th>Heap JS MB</th></tr></thead><tbody id="out"></tbody></table>
+<div class="row"><button id="copy">Copiar resultados</button></div>
+<p><small>Dispositivo: <span id="ua"></span></small></p>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
