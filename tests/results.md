@@ -26,3 +26,14 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S10 CSP | blob: crea worker por URL | worker-src 'self' blob: | 6 peticiones | — | — | los 3 | Cerrado por lockdown o worker-src sin 'self' |
 | S10 CSP | WASM en blob: sin 'wasm-unsafe-eval' | — | compilación bloqueada | — | — | los 3 | Obligatorio |
 | S10 CSP | Ghostscript en blob:+lockdown, sint-foto-5mb [SINT] | Module precompilado | ✅ código 0, 401.485 B | compilar 81–379 ms; init 9–15 ms; total ~750 ms | — | los 3 | |
+| S10 SW | 1.ª visita deep link `#/m/ligero` bajo `/mi-uni/` | max-age=600 | ✅ controlada; `shell-v1`, `mod-ligero-v1` | 116 / 615 / 95 ms | — | Chromium 158 · Firefox 155 · WebKit 26.6 | Firefox exige precachear módulos livianos en install |
+| S10 SW | módulo pesado (Ghostscript real) 15,57 MB, 3 archivos | SHA-256 por archivo | ✅ descargado y verificado | 397 / 1.254 / 950 ms | — | los 3 | `persist()`: false / pendiente / false |
+| S10 SW | WASM desde caché sin conexión | servidor caído | ✅ compilado | 72 / 195 / 119 ms | — | los 3 | WebKit + `setOffline` de Playwright falla (artefacto, ver ADR-005) |
+| S10 SW | gs.js corrupto | — | ✅ rechazado; no queda "completo"; reanudación reutiliza 2/3 | 15 / 551 / 46 ms | — | los 3 | |
+| S10 SW | publicación nueva con 2 pestañas | "Actualizar" en una | ✅ ambas en v2; cachés viejas borradas | 1,4 / 1,8 / 0,6 s | — | los 3 | |
+| S10 SW | precache con modo por defecto | max-age=600 | ❌ `index.html` de la versión anterior en `shell-v3` | — | — | Chromium, Firefox (WebKit no) | Con `cache:'reload'`: correcto en los 3 |
+| S10 SW | assets pesados v1→v2 (mismos archivos) | — | ✅ v1 sirve offline hasta completar v2; copia local sin red | 148 / 811 / 109 ms | — | los 3 | |
+| S10 canvas | área máxima página = worker | pixel de prueba | 268 / 537 / 268 MP; cuadrado 16.384 / 23.168 / 16.384 | — | ≥ 1,5 GB de canvas vivos | los 3 (escritorio) | iOS sin medir |
+| S10 canvas | JPEG 4000×3000 q0,85 | página / worker | 93–96 / 69–103 / 249–402 ms | — | — | los 3 | |
+| S10 PWA | instalabilidad bajo `/mi-uni/` | CDP | ✅ 0 errores | — | — | Chromium 158 | |
+| S10 shell | peso del shell del spike | gzip -9 | 27,8 KB / 11,9 KB gzip | — | — | — | Presupuesto: ≤ 150 KB |

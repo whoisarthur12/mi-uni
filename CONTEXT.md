@@ -192,6 +192,7 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 3. **GitHub Pages:** límite de **100 MB por archivo** y repositorio recomendado por debajo de ~1 GB. Un LibreOffice WASM de ~150 MB **no cabe en un solo archivo**: hay que **trocearlo** (p. ej., trozos ≤ 50 MB con un manifiesto) o alojarlo fuera, comprobando CORS.
 4. **OpenCV.js:** tamaño real, rendimiento y consumo de memoria en iPhone/Android de gama media; si conviene una librería ya construida sobre él.
 5. **Límites de memoria móvil:** Safari en iOS impone un tope al área de un `<canvas>` (del orden de 16 millones de píxeles; **verificar**) y a la memoria total de la pestaña. Las fotos de cámara de 12+ MP pueden provocar cierres si no se reducen al cargarlas.
+   - **Fase 0 (S10, parcial):** en escritorio el canvas máximo es 268 MP (Chromium/WebKit) y 537 MP (Firefox), igual en `OffscreenCanvas`. **iOS sin medir**: página `spikes/s10-plataforma/canvas/` lista para el iPhone. Mientras tanto, reducir al cargar a ≤ 16,7 MP.
 6. **`nspell` + diccionario español:** tamaño, tiempo de carga, calidad de sugerencias, licencia del diccionario.
 7. **Marp Core en navegador:** confirmar que funciona sin build y cómo exportar PDF fiable desde el navegador (imprimir con `@page` vs. rasterizar diapositivas). La impresión en iOS tiene peculiaridades.
 8. **Mermaid:** exportar a PNG puede fallar por etiquetas con `foreignObject` (contaminan el canvas); verificar la configuración que permite exportar bien.
@@ -201,6 +202,7 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 12. **Fórmulas de legibilidad en español** (Fernández-Huerta, Szigriszt-Pazos/INFLESZ): verificar coeficientes contra la fuente original antes de publicarlas, y la calidad del contador de sílabas.
 13. **`File System Access API`** solo existe en navegadores Chromium; hay que garantizar la alternativa (descarga clásica).
 14. **Wake Lock, `OffscreenCanvas`, módulos en Workers** y otras APIs: confirmar versiones mínimas de Safari iOS.
+   - **✅ Resuelto (S10, MDN BCD 8.1.10):** workers módulo iOS 15; `OffscreenCanvas` iOS 16.4; `'wasm-unsafe-eval'` iOS 16; Wake Lock iOS 18.4. Propuesta: mínimo **Safari iOS 16.4**; Wake Lock opcional. Tabla en `spikes/s10-plataforma/README.md`.
 15. **Cuota y persistencia de IndexedDB:** límites reales por navegador (sobre todo Safari/iOS), si `navigator.storage.persist()` se concede, y si el navegador puede **borrar datos** de sitios que no se usan durante un tiempo (en Safari hay políticas de este tipo; comprobar si las apps instaladas en pantalla de inicio están exentas). Condiciona el diseño del respaldo.
 16. **Proyectos con archivos grandes:** comportamiento al guardar *blobs* de decenas de MB en IndexedDB, rendimiento al exportar/importar un proyecto a ZIP de cientos de MB en celulares y si hace falta procesar por trozos.
 
