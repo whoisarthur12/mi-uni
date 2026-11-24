@@ -23,7 +23,7 @@ const Q = [['doi', '10.1038/nature12373'], ['doi', 'https://doi.org/10.1016/j.ce
     out.errs = errs;
     res[n] = out;
     console.log(`\n== ${n} ${out.version}`, JSON.stringify({ carga: out.carga, bench100: { engineMs: out.bench100.engineMs, bibMs: out.bench100.bibMs, cite50Ms: out.bench100.cite50Ms }, worker: out.worker, csp: out.csp.r, xss: out.sanitizar.peligroso }));
-    for (const c of out.consultas) console.log('  ', c.kind, c.input, '→', c.error ? `ERROR ${c.code}: ${c.error}` : c.encontrado === false ? 'no encontrado' : `${c.fuente}: ${c.referencia.slice(0, 140)}`, JSON.stringify(c.netlog));
+    for (const c of out.consultas) console.log('  ', c.kind, c.input, '→', c.error ? `ERROR ${c.code}: ${c.error}` : c.encontrado === false ? 'no encontrado' : `${c.fuente}: ${JSON.stringify(c.borrador).slice(0, 140)}`, JSON.stringify(c.netlog));
     console.log('   cabeceras:', JSON.stringify(out.cabeceras));
     await b.close();
   }

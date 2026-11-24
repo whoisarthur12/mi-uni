@@ -1,6 +1,7 @@
 // Página de medición S5 (también para el celular: "Copiar resultados").
 import { fromDOI, fromISBN } from './lookup.js';
 import { sanitizeInto } from './sanitize.js';
+import { renderForm } from './ref-form.js';
 
 const $ = (s) => document.querySelector(s);
 const results = { ua: navigator.userAgent, runs: [] };
@@ -15,8 +16,8 @@ async function load() {
   const importMs = ms(t);
   t = performance.now();
   [style, locales, baseItems] = await Promise.all([
-    text('./vendor/csl/apa-es.csl'),
-    Promise.all(['es-ES', 'en-US'].map(async (l) => [l, await text(`./vendor/csl/locales-${l}.xml`)])).then(Object.fromEntries),
+    text('../../js/vendor/csl/apa-es.csl'),
+    Promise.all(['es-ES', 'en-US'].map(async (l) => [l, await text(`../../js/vendor/csl/locales-${l}.xml`)])).then(Object.fromEntries),
     fetch('./test/items.json').then((r) => r.json()),
   ]);
   return log('carga', { importCiteprocMs: importMs, estiloYLocalesMs: ms(t) });
@@ -39,11 +40,21 @@ async function lookup(kind, input) {
   try {
     const r = kind === 'doi' ? await fromDOI(input, { userInitiated: true, log: (x) => netlog.push(x) }) : await fromISBN(input, { userInitiated: true, log: (x) => netlog.push(x) });
     if (!r) return log('consulta', { kind, input, encontrado: false, netlog, ms: ms(t) });
-    const eng = cite.createEngine({ styleXml: style, locales, items: [{ ...r.item, id: 'q' }], lang: 'es-ES' });
-    const html = cite.bibliography(eng)[0].html;
-    sanitizeInto($('#bib'), html);
-    return log('consulta', { kind, input, fuente: r.fuente, revisar: r.revisar, referencia: $('#bib').textContent, cita: cite.cite(eng, 'q'), netlog, ms: ms(t) });
+    showForm(r);
+    return log('consulta', { kind, input, fuente: r.fuente, revisar: r.revisar, borrador: r.item, netlog, ms: ms(t) });
   } catch (e) { return log('consulta', { kind, input, error: e.message, code: e.code, netlog, ms: ms(t) }); }
+}
+
+const saved = [];
+/** Formulario editable (tras búsqueda o manual). Al guardar, formatea con el estilo y añade a la lista. */
+function showForm(r = {}) {
+  renderForm($('#form'), { ...r, onSave: (item) => {
+    saved.push({ ...item, id: 'r' + saved.length });
+    const eng = cite.createEngine({ styleXml: style, locales, items: saved, lang: 'es-ES' });
+    sanitizeInto($('#bib'), cite.bibliography(eng).map((b) => b.html).join(''));
+    $('#form').replaceChildren();
+    log('guardada', { referencia: [...$('#bib').children].map((d) => d.textContent), cita: cite.cite(eng, 'r' + (saved.length - 1)) });
+  } });
 }
 
 /** La CSP debe bloquear cualquier host fuera de la lista (sin red: el navegador corta antes). */
@@ -77,5 +88,6 @@ async function benchWorker(n = 100) {
 $('#bench').onclick = () => bench();
 $('#doi').onclick = () => lookup('doi', $('#id').value);
 $('#isbn').onclick = () => lookup('isbn', $('#id').value);
+$('#manual').onclick = async () => { if (!cite) await load(); showForm(); };
 $('#copy').onclick = async () => { try { await navigator.clipboard.writeText(JSON.stringify(results)); } catch { /* copiar a mano */ } };
-window.__s5 = { load, bench, benchWorker, lookup, cspProbe, sanitizeProbe, results };
+window.__s5 = { load, bench, benchWorker, showForm, lookup, cspProbe, sanitizeProbe, results };

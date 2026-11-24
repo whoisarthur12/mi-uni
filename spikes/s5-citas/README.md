@@ -1,6 +1,6 @@
 # S5 — Citas (CSL) y metadatos por DOI/ISBN
 
-**Veredicto: ⚠️ viable con condiciones.**
+**Veredicto: ⚠️ viable con condiciones.** ADR-007 y ADR-008 **aprobados** (24-nov-2026). El estilo `apa-es.csl` es **PROVISIONAL**: aplica solo la edición en español de APA 7, sin reglas de ninguna universidad, hasta tener el reglamento del dueño.
 - citeproc-js genera APA 7 en español correcta en los 10 tipos de prueba, en Node y en los 3 motores, también dentro de un worker.
 - CrossRef y Open Library responden por CORS desde el navegador, sin servidor propio.
 
@@ -11,16 +11,17 @@ Condiciones:
 - Google Books sin clave no es fiable.
 - Falta validar el resultado con el reglamento de tu universidad.
 
-Decisiones propuestas: [ADR-007](../../docs/decisions/ADR-007-excepcion-de-red-doi-isbn.md) (red) y [ADR-008](../../docs/decisions/ADR-008-motor-de-citas-csl.md) (motor).
+Decisiones: [ADR-007](../../docs/decisions/ADR-007-excepcion-de-red-doi-isbn.md) (red) y [ADR-008](../../docs/decisions/ADR-008-motor-de-citas-csl.md) (motor).
 
 ## Pregunta
 ¿Qué procesador CSL usar sin build? ¿Cuánto pesa con estilos y locales, y es correcta la salida APA 7 en español? ¿Responden CrossRef, Open Library y Google Books desde un navegador (CORS), y qué datos se envían?
 
 ## Método
-- `vendor/citeproc-2.4.63/citeproc.mjs`: citeproc-js de npm con una sola línea cambiada para usarlo como ES module (ver ADR-008).
-- `vendor/csl/`: estilos y locales oficiales de CSL, fijados por commit.
-- `vendor/csl/apa-es.csl`: se genera con `python3 -I spikes/s5-citas/tools/make_apa_es.py`.
-- `js/cite.js` (envoltorio), `js/cite-worker.js`, `js/net-guard.js` (la excepción de red), `js/lookup.js` (DOI/ISBN → CSL-JSON) y `js/sanitize.js`.
+- `js/vendor/citeproc-2.4.63/citeproc.mjs` (raíz del repo, tras la aprobación de ADR-008): citeproc-js con una sola línea cambiada para usarlo como ES module.
+- `js/vendor/csl/`: estilos y locales oficiales de CSL, fijados por commit.
+- `js/vendor/csl/apa-es.csl` (**provisional**): se genera con `python3 -I spikes/s5-citas/tools/make_apa_es.py`.
+- `js/cite.js` (envoltorio), `js/cite-worker.js`, `js/net-guard.js` (la excepción de red), `js/lookup.js` (DOI/ISBN → CSL-JSON), `js/sanitize.js` y `js/ref-form.js` (formulario editable: tras una búsqueda o para la entrada manual).
+- `tests/policy/net-guard-scope.test.mjs` (raíz del repo): falla si cualquier archivo fuera del net-guard usa la excepción.
 - 15 pruebas en Node con la salida esperada de 10 tipos de fuente y las reglas del net-guard: `node --test spikes/s5-citas/test/cite.test.mjs`.
 - `runner/s5run.cjs` en los 3 motores mide rendimiento, consultas reales, cabeceras enviadas (vistas desde Playwright), CSP y sanitización.
 
@@ -88,10 +89,15 @@ CORS: CrossRef y Open Library mandan `Access-Control-Allow-Origin: *`; Google Bo
 6. citeproc usa espacios de no separación en "s. f.", "et al." y "p. 12" (correcto; tenerlo en cuenta al comparar textos).
 7. **citeproc-js funciona en un worker** sin `DOMParser` en los 3 motores y no usa red (el camino con XHR solo existe para entornos sin parser y no se activa).
 
+## Interfaz tras las decisiones del dueño (24-nov-2026)
+- **ISBN:** solo Open Library; Google Books solo como respaldo **sin clave**, sin depender de él.
+- **Siempre editable:** la búsqueda solo rellena un **borrador**; los autores (apellidos y nombres) son editables antes de guardar. El botón **"Entrada manual"** abre el mismo formulario vacío.
+- **Validación:** sin título no se guarda; una página web sin fecha exige la fecha de consulta.
+- Medido con `runner/s5form.cjs` en los 3 motores: ISBN de *Cien años de soledad* → borrador "Márquez, G." → corregido a "García Márquez, Gabriel" → `García Márquez, G. (2004). Cien años de soledad. Cátedra.` y `(García Márquez, 2004)`. La página web sin fecha se rechaza hasta poner la fecha de consulta.
+
 ## Pendiente
-- Validar `apa-es` con el **reglamento de formato de tu universidad** (INSTRUCTIONS §11.3).
+- `apa-es` sigue **PROVISIONAL** hasta tener el **reglamento de formato** de la universidad (INSTRUCTIONS §11.3). No se inventan reglas.
 - Medir en el iPhone: `…/spikes/s5-citas/` → "Medir 100 referencias", buscar un DOI y un ISBN, "Copiar resultados".
-- Decidir si se usa una clave de Google Books restringida por *referrer* o se deja Open Library como única fuente de ISBN.
 
 ## Reproducir
 ```bash
