@@ -1,6 +1,7 @@
 // Página de medición S11 (también para el celular del dueño: "Copiar resultados").
 import * as S from './store.js';
 import { crc32Blob } from './zip.js';
+import { backupStatus } from './backup-policy.js';
 
 const $ = (s) => document.querySelector(s);
 const MB = 1048576;
@@ -17,7 +18,9 @@ function randomBlob(mb, type = 'application/pdf') {
 }
 
 let db;
-async function ready() { if (!db) { db = await S.openDB(); const n = await S.cleanupIncompleteImports(db); if (n) log('limpieza', { importacionesIncompletas: n }); } return db; }
+// Tamaño de trozo (MB) elegido en la página; 0 = archivo entero en un solo trozo (para comparar memoria).
+const chunkBytes = () => { const v = +($('#chunk') ? $('#chunk').value : 8); return v ? v * MB : Number.MAX_SAFE_INTEGER; };
+async function ready() { if (!db) { db = await S.openDB(); const n = await S.cleanupIncomplete(db); if (n.proyectos || n.trozosHuerfanos) log('limpieza', n); } return db; }
 
 async function benchBlobs(sizes = [5, 30, 80]) {
   await ready();
@@ -25,7 +28,7 @@ async function benchBlobs(sizes = [5, 30, 80]) {
   for (const mb of sizes) {
     const blob = randomBlob(mb);
     let t = performance.now(); const crc = await crc32Blob(blob); const crcMs = ms(t);
-    t = performance.now(); const r = await S.saveResource(db, p.id, blob, { nombre: `b${mb}.pdf` }); const putMs = ms(t);
+    t = performance.now(); const r = await S.saveResource(db, p.id, blob, { nombre: `b${mb}.pdf`, chunk: chunkBytes() }); const putMs = ms(t);
     t = performance.now(); const back = await S.getBlob(db, r.id); const getMs = ms(t);
     t = performance.now(); const buf = await back.arrayBuffer(); const readMs = ms(t);
     const ok = buf.byteLength === blob.size && (await crc32Blob(back)) === crc;
@@ -39,7 +42,7 @@ async function makeProject(sizes = [80, 80, 30, 5, 5]) {
   await ready();
   const p = await S.createProject(db, 'Proyecto de prueba ñ');
   const t = performance.now();
-  for (const [i, mb] of sizes.entries()) await S.saveResource(db, p.id, randomBlob(mb), { nombre: `archivo ${i + 1} (${mb} MB).pdf` });
+  for (const [i, mb] of sizes.entries()) await S.saveResource(db, p.id, randomBlob(mb), { nombre: `archivo ${i + 1} (${mb} MB).pdf`, chunk: chunkBytes() });
   log('proyecto creado', { id: p.id, mb: sizes.reduce((a, b) => a + b, 0), ms: ms(t), estimate: await estimate() });
   return p.id;
 }
@@ -54,13 +57,14 @@ async function exportProject(id, { download = true } = {}) {
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
   log('exportar', { zipMB: +(zip.size / MB).toFixed(1), buildMs });
+  await inventory();
   return zip.size;
 }
 
 async function importFile(file, opts) {
   await ready();
   const t = performance.now();
-  try { const r = await S.importProject(db, file, opts); log('importar', { ...r, ms: ms(t), estimate: await estimate() }); return r; }
+  try { const r = await S.importProject(db, file, { chunk: chunkBytes(), ...opts }); log('importar', { ...r, chunkMB: +($('#chunk')?.value ?? 8), ms: ms(t), estimate: await estimate() }); await inventory(); return r; }
   catch (e) { log('importar', { error: e.message, code: e.code, ms: ms(t) }); return { error: e.message, code: e.code }; }
 }
 
@@ -79,7 +83,7 @@ async function fillUntilError(stepMB = 50, maxMB = 4000) {
   const p = await S.createProject(db, 'cuota'); let total = 0; let err = null;
   const t = performance.now();
   while (total < maxMB) {
-    try { await S.saveResource(db, p.id, randomBlob(stepMB), { nombre: `q${total}` }); total += stepMB; }
+    try { await S.saveResource(db, p.id, randomBlob(stepMB), { nombre: `q${total}`, chunk: chunkBytes() }); total += stepMB; }
     catch (e) { err = { name: e && e.name, message: String(e && e.message).slice(0, 200) }; break; }
   }
   const est = await estimate();
@@ -106,13 +110,19 @@ $('#wipe').onclick = async () => { db && db.close(); db = null; await new Promis
 // Al abrir: qué hay guardado (sirve para la prueba de borrado de Safari tras 8 días sin uso).
 async function inventory() {
   await ready();
-  const ps = await new Promise((ok, ko) => { const r = db.transaction('proyectos').objectStore('proyectos').getAll(); r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error); });
-  let bytes = 0; for (const p of ps) for (const r of await S.listResources(db, p.id)) bytes += r.size;
-  const last = ps.map((p) => p.importado || p.creado).sort().at(-1) || null;
+  const ps = await S.listProjects(db);
+  let bytes = 0; const rows = [];
+  for (const p of ps) {
+    for (const r of await S.listResources(db, p.id)) bytes += r.size;
+    const b = backupStatus(p);
+    rows.push(`${b.nivel === 'ok' ? '✓' : '⚠'} ${p.nombre}: ${b.texto}`);
+  }
+  const last = ps.map((p) => p.modificado || p.creado).sort().at(-1) || null;
   $('#saved').textContent = ps.length
-    ? `Datos guardados: ${ps.length} proyecto(s), ${(bytes / MB).toFixed(0)} MB; el más reciente del ${new Date(last).toLocaleString('es-DO')}`
+    ? `Datos guardados: ${ps.length} proyecto(s), ${(bytes / MB).toFixed(0)} MB; último cambio: ${new Date(last).toLocaleString('es-DO')}`
     : 'No hay datos guardados en este navegador.';
-  log('inventario', { proyectos: ps.length, mb: Math.round(bytes / MB), ultimo: last });
+  $('#backup').textContent = rows.join('\n');
+  log('inventario', { proyectos: ps.length, mb: Math.round(bytes / MB), ultimo: last, respaldo: ps.map((p) => backupStatus(p).nivel) });
 }
 inventory().catch((e) => { $('#saved').textContent = 'No se pudo leer IndexedDB: ' + e.message; });
 

@@ -37,14 +37,18 @@ async function run(name) {
     const r = await p.evaluate(() => window.__s11.results.runs.filter((x) => x.k === 'importar').at(-1));
     return { delta: m.peakDeltaMB, r, cmp: r.id ? await p.evaluate(([a, b]) => window.__s11.compare(a, b), [pid, r.id]) : null };
   });
-  // Mismo ZIP otra vez en otro "navegador": contexto nuevo (perfil limpio).
-  await step('importar en perfil limpio', async () => {
-    const c2 = await pw[name].launchPersistentContext(prof('b')); const p2 = c2.pages()[0] || await c2.newPage(); await p2.goto(URL_); await p2.waitForFunction(() => window.__s11);
-    await p2.setInputFiles('#imp', zipPath);
-    await p2.waitForFunction(() => window.__s11.results.runs.some((x) => x.k === 'importar'), null, { timeout: 180000 });
-    const r = await p2.evaluate(() => window.__s11.results.runs.find((x) => x.k === 'importar'));
-    await c2.close(); return { r };
-  });
+  // Mismo ZIP en perfiles limpios (otro "navegador"), comparando memoria según el tamaño de trozo.
+  for (const chunk of [0, 16, 8]) {
+    await step(`importar en perfil limpio, trozo ${chunk || 'entero'}`, async () => {
+      const c2 = await pw[name].launchPersistentContext(prof('b' + chunk)); const p2 = c2.pages()[0] || await c2.newPage();
+      await p2.goto(URL_); await p2.waitForFunction(() => window.__s11); await p2.selectOption('#chunk', String(chunk)); await p2.waitForTimeout(500);
+      const m = await peak(async () => { await p2.setInputFiles('#imp', zipPath);
+        await p2.waitForFunction(() => window.__s11.results.runs.some((x) => x.k === 'importar'), null, { timeout: 300000 }); });
+      const r = await p2.evaluate(() => window.__s11.results.runs.find((x) => x.k === 'importar'));
+      const backup = await p2.evaluate(() => window.__s11.results.runs.filter((x) => x.k === 'inventario').at(-1));
+      await c2.close(); return { delta: m.peakDeltaMB, r, respaldo: backup && backup.respaldo };
+    });
+  }
   await step('ZIP dañado', async () => {
     const bad = path.join(OUT, `${name}-danado.zip`); const buf = fs.readFileSync(zipPath); buf[buf.length - 30 * 1048576] ^= 0xff; fs.writeFileSync(bad, buf);
     await p.setInputFiles('#imp', bad);
@@ -62,8 +66,8 @@ async function run(name) {
     c = await pw[name].launchPersistentContext(d); q = c.pages()[0] || await c.newPage();
     await q.goto(URL_); await q.waitForFunction(() => window.__s11);
     const after = await q.evaluate(async () => { await window.__s11.estimate(); const S = await import('./js/store.js'); const db = await S.openDB();
-      const n = await S.cleanupIncompleteImports(db);
-      return new Promise((ok) => { const r = db.transaction(['proyectos', 'blobs']).objectStore('blobs').count(); r.onsuccess = () => ok({ limpiadas: n, blobsRestantes: r.result }); }); });
+      const n = await S.cleanupIncomplete(db);
+      return new Promise((ok) => { const r = db.transaction('trozos').objectStore('trozos').count(); r.onsuccess = () => ok({ limpiadas: n, trozosRestantes: r.result }); }); });
     await c.close(); return { proyectosAlCerrar_importando: half, ...after };
   });
   if (name === 'webkit' || process.env.QUOTA) await step('cuota', async () => ({ r: (await p.evaluate(() => window.__s11.fillUntilError(50, 1500))).runs.at(-1) }));

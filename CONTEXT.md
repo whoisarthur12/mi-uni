@@ -146,7 +146,7 @@ El dueño tiene un catálogo ampliado de otra conversación (se conoce aquí sol
 | Estructura | **PWA única** con *shell* + módulos cargados bajo demanda (`import()` dinámico) | Una instalación, módulos pesados solo si se usan |
 | Navegación | Router por *hash* (`#/ruta`) | GitHub Pages no reescribe rutas; el *history API* daría 404 al recargar |
 | Almacenamiento | **IndexedDB** (datos) + **Cache API** (assets pesados) + `localStorage` solo para ajustes triviales | Capacidad y robustez |
-| Respaldo | Exportar/importar **todo** como JSON (o ZIP) | Sin backend no hay copia en la nube |
+| Respaldo | Exportar/importar **todo** como JSON (o ZIP). **Requisito de producto (ADR-006):** la app muestra la fecha del último respaldo de cada proyecto y avisa cuando hay cambios sin exportar desde hace ≥ 7 días (configurable) | Sin backend no hay copia en la nube; el navegador puede borrar los datos |
 | Proyectos | **Sistema local de proyectos y entidades** con IDs estables (ver §8.6); exportable como ZIP | Convierte herramientas sueltas en flujos completos |
 | Comunicación entre módulos | **Bus de eventos local** (`EventTarget`) + contratos de datos en `ctx.projects` (ver §8.7) | Los módulos no se importan entre sí |
 | Cuentas y sincronización | **Ninguna** (por ahora) | Sin backend; sincronizar sería una fase futura y opcional |
@@ -417,6 +417,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 - **"Guardar en proyecto"** desde cualquier herramienta al terminar, y **"Usar un recurso del proyecto"** al empezar (p. ej., el compresor ofrece los PDF del proyecto).
 - **Búsqueda dentro del proyecto** y desde el buscador global.
 - **Exportar/importar** un proyecto como ZIP (respaldo y traslado entre dispositivos).
+- **Fecha del último respaldo** visible en cada proyecto y **aviso** cuando hace tiempo que no se exporta (ADR-006). Cada archivo guardado se **relee y verifica** (tamaño y CRC) antes de confirmarse.
 - **Espacio usado** por proyecto y avisos de cuota.
 
 **Qué NO hace.** No sincroniza con la nube, no colabora en tiempo real y no es obligatorio.

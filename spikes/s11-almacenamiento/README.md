@@ -8,7 +8,7 @@
 ## Método
 - Página `index.html` (también para el celular: "Copiar resultados"). Datos **aleatorios** (incompresibles, como PDF/JPEG), nunca datos del usuario.
 - `js/zip.js`: ZIP **propio, sin dependencias** (STORE para escribir; STORE y DEFLATE vía `DecompressionStream` para leer). El CRC-32 se calcula **al guardar** cada recurso, así exportar es solo componer Blobs (sin copiar datos). 5 pruebas en Node (`node --test spikes/s11-almacenamiento/test/zip.test.mjs`), incluida la validación del ZIP con `zipfile` de Python y la lectura de un ZIP DEFLATE hecho por Python.
-- `js/store.js`: almacenes `proyectos`, `recursos` (metadatos + CRC) y `blobs`; exportar/importar proyecto.
+- `js/store.js`: almacenes `proyectos`, `recursos` (metadatos + CRC) y `trozos` (datos en trozos de 8 MB); exportar/importar proyecto. Las tablas de "Resultados" se midieron con la versión anterior (archivo en un solo registro); la versión con trozos está en "Condiciones de ADR-006".
 - `runner/s11run.cjs` en los 3 motores con **perfil persistente en disco** (un `newContext()` de Playwright es tipo incógnito y guarda IndexedDB en memoria: la primera medición daba 25 MB usados para 200 MB guardados). Memoria = pico de RSS de todos los procesos del navegador.
 
 ## Resultados
@@ -47,6 +47,19 @@ Releídos byte a byte: correctos en los 3. CRC-32 en JS: ~240 MB/s (Chromium) a 
 - **Safari iOS:** cuota real, borrado tras 7 días sin uso y si las apps en pantalla de inicio están exentas. Lo que se sabe viene de publicaciones de WebKit; `webkit.org` está bloqueado en la red de esta sesión y no pude citarlas. Además, WebKit en Linux no reproduce las políticas de iOS. → Medir en el iPhone con esta página (y repetirla a los 8 días sin abrirla).
 - Safari iOS en navegación privada (ver hallazgo 5).
 - `QuotaExceededError` en Chromium/Firefox (cuota de 10 GB: no se llenó).
+
+## Condiciones de ADR-006 (implementadas y medidas)
+1. **Verificar después de escribir, siempre:** cada trozo se relee desde IndexedDB y se compara (tamaño + CRC) antes de seguir; el recurso solo se registra cuando todos sus trozos pasaron. Si algo falla se borran los trozos escritos.
+2. **Importación archivo por archivo y trozo por trozo** (`js/store.js`, almacén `trozos` con clave `[recursoId, i]`). El CRC del archivo se calcula mientras se escribe: el ZIP se lee una sola vez. Pico de RSS al importar el proyecto de 200 MB en un perfil limpio:
+
+| Motor | Archivo entero | Trozos de 16 MB | **Trozos de 8 MB** | Tiempo (8 MB) |
+|---|---|---|---|---|
+| Chromium 158 | +349 MB | +195 MB | **+173 MB** | 3,0 s |
+| Firefox 155 | +432 MB | +215 MB | **+157 MB** | 9,6 s |
+| WebKit 26.6 | +647 MB | +258 MB | **+133 MB** | 3,5 s |
+
+   **Decisión: trozos de 8 MB por defecto** (WebKit baja casi 5×; el tiempo apenas cambia). Leer un recurso arma `new Blob(trozos)` sin copiar datos. Un ZIP dañado se detecta al terminar el archivo afectado y se borra todo lo escrito (0,8–3 s más que verificando antes, a cambio de leer el ZIP una sola vez). Al abrir la página se limpian importaciones cortadas y trozos huérfanos (medido: 0 trozos restantes tras cerrar el navegador a mitad, en los 3).
+3. **Respaldo como requisito:** cada proyecto guarda `modificado` y `ultimoRespaldo`; la página muestra la fecha del último respaldo y avisa cuando hay cambios sin exportar desde hace ≥ 7 días, o con datos que nunca se exportaron (`js/backup-policy.js`, 7 pruebas en Node). Un proyecto importado toma como último respaldo la fecha del ZIP.
 
 ## Cómo probar en el celular
 Abrir la página (cuando Pages esté activo: `https://whoisarthur12.github.io/mi-uni/spikes/s11-almacenamiento/`), pulsar "Medir 5 / 30 / 80 MB", luego "Crear proyecto de 200 MB y exportar ZIP", importar el ZIP descargado con "Importar ZIP", y "Copiar resultados". "Borrar datos" libera el espacio.

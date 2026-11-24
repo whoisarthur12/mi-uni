@@ -45,3 +45,5 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S11 IndexedDB | `File.slice()` guardado tal cual | — | ❌ se relee el File entero | — | — | WebKit 26.6 | Chromium/Firefox OK; copiar con arrayBuffer() lo corrige |
 | S11 cuota | llenar de 50 en 50 MB | tope 1.500 MB | sin error a 1.500 MB; `estimate()` usage 0 / quota 1.000 | 22 s | — | WebKit 26.6 | estimate() inútil en WebKit |
 | S11 persist | `navigator.storage.persist()` | sin gesto | false / pendiente / false | — | — | los 3 | |
+| S11 trozos | importar proyecto 200 MB [SINT] en perfil limpio | archivo entero / 16 MB / 8 MB | ✅ idéntico en todos | 8 MB: 3,0 / 9,6 / 3,5 s | +349/+195/+173 · +432/+215/+157 · +647/+258/+133 MB | Chromium · Firefox · WebKit | 8 MB por defecto (ADR-006) |
+| S11 respaldo | política de aviso | 7 días | ✅ 7 pruebas en Node | — | — | Node 22 | |
