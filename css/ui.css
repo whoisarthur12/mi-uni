@@ -228,3 +228,6 @@ main { max-width: 40rem; margin: 0 auto; padding: 0 max(20px, env(safe-area-inse
 @media (min-width: 42rem) { .banda-fija { margin-left: auto; margin-right: auto; } }
 /* El foco programático del router en <main> es para lectores de pantalla: sin marco visible. */
 #contenido:focus, #contenido:focus-visible { outline: none; }
+.estado-fijo { position: sticky; bottom: calc(72px + env(safe-area-inset-bottom)); margin-top: var(--paso); }
+.estado-fijo p:not(:empty) { display: inline-block; padding: 6px 14px; border-radius: 9999px; background: var(--inset); color: var(--tinta); }
+.titulo-seccion + p.suave { margin: calc(var(--ritmo) * -0.5) 0 var(--paso); }

@@ -32,20 +32,24 @@ export function iniciarShell({ version, extras = {} } = {}) {
     const mio = ++turno;
     try { actual?.desmontar?.(); } catch (e) { diag('modulo:desmontar', { message: e.message }); }
     actual = null;
-    main.replaceChildren();
+    // Cada ruta pinta en su propio contenedor: si el usuario navega mientras una vista carga,
+    // la vista vieja escribe en un nodo ya desconectado y no mezcla contenido.
+    const zona = h('div');
+    main.replaceChildren(zona);
     const enModulo = r.name === 'modulo';
     $('.volver').hidden = !enModulo; $('.marca').hidden = enModulo;
     const pest = enModulo ? 'inicio' : r.name;
     $$('.pestanas a').forEach((a) => (a.dataset.pest === pest ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-    if (r.name === 'inicio') vistaInicio(main, ctx);
-    else if (r.name === 'proyectos') vistaProyectos(main, ctx);
-    else if (r.name === 'ajustes') vistaAjustes(main, ctx);
+    if (r.name === 'inicio') await vistaInicio(zona, ctx);
+    else if (r.name === 'proyectos') await vistaProyectos(zona, ctx);
+    else if (r.name === 'ajustes') await vistaAjustes(zona, ctx);
     else if (enModulo) {
-      const m = await vistaModulo(main, ctx, r.params.id);
+      const m = await vistaModulo(zona, ctx, r.params.id);
       if (mio !== turno) { m?.desmontar?.(); return; } // el usuario ya navegó a otra parte
       actual = m;
-    } else main.append(h('h1.par', {}, 'No encontrado. ', h('span.suave', {}, 'Esa página no existe.')), h('a.enlace', { href: '#/' }, 'Volver al inicio'));
-    const h1 = main.querySelector('h1');
+    } else zona.append(h('h1.par', {}, 'No encontrado. ', h('span.suave', {}, 'Esa página no existe.')), h('a.enlace', { href: '#/' }, 'Volver al inicio'));
+    if (mio !== turno) return;
+    const h1 = zona.querySelector('h1');
     document.title = `${h1 ? h1.firstChild.textContent.replace(/\.\s*$/, '').trim() : 'Mi Uni'} — Mi Uni`;
     if (!primera) { scrollTo(0, 0); main.focus({ preventScroll: true }); }
     primera = false;

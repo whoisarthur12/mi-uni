@@ -5,7 +5,7 @@
 
   // Subir SHELL_VERSION en cada publicación que cambie un archivo del shell (si no, los teléfonos
   // con la app instalada seguirían con la versión vieja hasta que se borre la caché).
-  const SHELL_VERSION = 1;
+  const SHELL_VERSION = 2;
   const PRECACHE_MODE = 'reload'; // salta la caché HTTP de Pages (max-age=600)
 
   const SHELL_FILES = [
@@ -13,7 +13,7 @@
     './css/ui.css', './js/theme-boot.js', './js/app.js',
     './js/core/router.js', './js/core/net-guard.js', './js/core/workers.js', './js/core/lockdown.js',
     './js/core/sw-client.js', './js/core/offline.js', './js/core/theme.js', './js/core/dom.js', './js/core/icons.js',
-    './js/core/hooks.js',
+    './js/core/hooks.js', './js/core/db.js', './js/core/ajustes.js', './js/core/ajustes-modelo.js',
     './js/shell/shell.js', './js/shell/registry.js',
     './js/shell/vistas/inicio.js', './js/shell/vistas/proyectos.js', './js/shell/vistas/ajustes.js', './js/shell/vistas/modulo.js',
     './js/vendor/inter-4.001/inter-latin-wght-normal.woff2',
