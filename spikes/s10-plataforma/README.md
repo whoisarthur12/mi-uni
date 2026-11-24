@@ -94,6 +94,7 @@ node spikes/s10-plataforma/runner/s10install.cjs
 | S10 · Canvas | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/canvas/` | (a) (b) (c) |
 | S11 · Almacenamiento | `https://whoisarthur12.github.io/mi-uni/spikes/s11-almacenamiento/` | (a) (b) (c) |
 | S5 · Citas DOI/ISBN | `https://whoisarthur12.github.io/mi-uni/spikes/s5-citas/` | (a) (b) (c) |
+| S12 · PDF (unir, miniaturas, render) | `https://whoisarthur12.github.io/mi-uni/spikes/s12-pdf/` | (b); (a) y (c) cuando se mergee el PR de S12 |
 
 (a) El `index.html` existe en `main` (`git ls-tree origin/main`). (b) Responde 200 en el servidor que imita Pages (`runner/pages-server.cjs`, sitio bajo `/mi-uni/`). (c) Está en el artefacto que subió el despliegue de Pages de `main` del 24-nov 14:49 (log del job "build", run 45418371925).
 
@@ -140,5 +141,11 @@ node spikes/s10-plataforma/runner/s10install.cjs
 1. Abre `…/spikes/s1-ghostscript/` y elige un PDF pesado tuyo (no sale del teléfono).
 2. Prueba 150 DPI / calidad 60.
 3. Pulsa **«Copiar resultados»**.
+
+### 6. S12 · PDF
+1. Abre `…/spikes/s12-pdf/` y elige 2 o 3 PDFs pesados tuyos (no salen del teléfono).
+2. Pulsa «Unir los elegidos». Si la pestaña se recarga sola, anota el tamaño total de los archivos.
+3. Pulsa «Miniaturas del primero» y luego «Render grande».
+4. Pulsa **«Copiar resultados»**.
 
 Todo lo anterior queda **pendiente de dispositivo** hasta recibir tus resultados.
