@@ -6,6 +6,8 @@ Proyecto: **AGPL-3.0-only** (obligado por Ghostscript; ver `CONTEXT.md` §6).
 | Componente | Licencia | Compatible con AGPL-3.0 | Notas |
 |---|---|---|---|
 | Ghostscript 10.06.0 vía `@okathira/ghostpdl-wasm` 1.1.0 | AGPL-3.0-or-later | Sí (obliga a AGPL en todo el proyecto) | Ver sección «Código fuente correspondiente» abajo; Artifex ofrece licencia comercial |
+| citeproc-js 2.4.63 *(en evaluación, S5)* | CPAL-1.0 **o** AGPL-3.0-or-later (a elección) | Sí, eligiendo AGPL-3.0-or-later | Fuente: paquete npm `citeproc@2.4.63` y https://github.com/Juris-M/citeproc-js; único cambio documentado en ADR-008 |
+| Estilos y locales CSL *(en evaluación, S5)* | CC BY-SA 3.0 | Sí (contenido de datos, licencia separada; requiere atribución y misma licencia en derivados) | `apa-es.csl` derivado de `apa.csl`, también CC BY-SA 3.0; ver `spikes/s5-citas/vendor/csl/README.md` |
 
 ## Código fuente correspondiente (AGPL §6 y §13)
 

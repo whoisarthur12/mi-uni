@@ -47,3 +47,11 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S11 persist | `navigator.storage.persist()` | sin gesto | false / pendiente / false | — | — | los 3 | |
 | S11 trozos | importar proyecto 200 MB [SINT] en perfil limpio | archivo entero / 16 MB / 8 MB | ✅ idéntico en todos | 8 MB: 3,0 / 9,6 / 3,5 s | +349/+195/+173 · +432/+215/+157 · +647/+258/+133 MB | Chromium · Firefox · WebKit | 8 MB por defecto (ADR-006) |
 | S11 respaldo | política de aviso | 7 días | ✅ 7 pruebas en Node | — | — | Node 22 | |
+| S5 CSL | 10 tipos de fuente (items.json) [SINT] | apa-es + es-ES | ✅ coincide con lo esperado (15 pruebas) | — | — | Node 22 | Validar con el reglamento de la universidad |
+| S5 CSL | 100 referencias APA | crear motor / bibliografía / 50 citas | ✅ | 745/119/13 · 1.187/176/33 · 923/199/31 ms | — | Chromium 158 · Firefox 155 · WebKit 26.6 | En worker: bloqueo máx. de página 17 / 18 / 26 ms |
+| S5 red | DOI CrossRef (2) + inexistente | CORS desde el navegador | ✅ 200 / 404 | 0,1–0,6 s | — | los 3 | Firefox con ignoreHTTPSErrors (CA del proxy del contenedor) |
+| S5 red | ISBN Open Library (3) | CORS | ✅ | 0,14–4,3 s | — | los 3 | Apellidos compuestos mal separados |
+| S5 red | ISBN Google Books | sin clave | ❌ 429 cuota diaria | — | — | curl | Solo respaldo |
+| S5 red | cabeceras enviadas | — | Origin sí; sin Referer ni cookies | — | — | los 3 | |
+| S5 CSP | fetch a example.com | connect-src con 3 hosts | ✅ bloqueado | — | — | los 3 | |
+| S5 XSS | título con img onerror / script / javascript: | sanitizador | ✅ eliminado | — | — | los 3 | |
