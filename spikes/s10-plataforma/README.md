@@ -80,3 +80,31 @@ node spikes/s10-plataforma/runner/s10canvas.cjs
 node spikes/s10-plataforma/runner/s10install.cjs
 ```
 `runner/gen-assets.cjs` regenera `app/modules/pesado/assets.json`; `app/gen_icons.py` los íconos (Pillow).
+
+## Probar en el iPhone (GitHub Pages)
+Base: `https://whoisarthur12.github.io/mi-uni/`. Usa **Safari** (no un navegador dentro de otra app). Al terminar cada página, pulsa **"Copiar resultados"** y pégalos en un mensaje.
+
+| Prueba | URL |
+|---|---|
+| S1 compresor (elige un PDF real) | `https://whoisarthur12.github.io/mi-uni/spikes/s1-ghostscript/` |
+| S10 CSP en workers | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/csp/` |
+| S10 mini-PWA (offline, actualización, instalación) | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/app/` |
+| S10 límites de canvas | `https://whoisarthur12.github.io/mi-uni/spikes/s10-plataforma/canvas/` |
+| S11 almacenamiento y ZIP | `https://whoisarthur12.github.io/mi-uni/spikes/s11-almacenamiento/` |
+
+La prueba de CSP usa un servidor testigo local (`127.0.0.1:8766`) que no existe en el teléfono: allí solo sirve para ver que los workers arrancan y que nada da error; las fugas se midieron en escritorio.
+
+### Mini-PWA, paso a paso
+1. Abre `…/spikes/s10-plataforma/app/#/m/ligero` con Wi-Fi. Debe decir "Módulo ligero montado".
+2. Ve a **Pesado** → "Descargar para usar sin conexión" (15,5 MB). Debe terminar con "Descarga completa y verificada".
+3. **Instalar:** botón Compartir → "Añadir a pantalla de inicio" → Añadir. Abre la app desde el ícono.
+4. **Modo avión** activado. Desde el ícono: abre Inicio, Ligero y Pesado. Pesado debe decir "Ghostscript WASM compilado en N ms". Anota N.
+5. Repite el paso 4 en Safari (no en la app instalada), también en modo avión.
+6. Quita el modo avión. **Actualización:** cuando yo publique una versión nueva te aviso; en Ajustes pulsa "Buscar actualización" y luego "Actualizar". Debe recargar sin quedarse en la versión vieja.
+7. Envíame: modelo del iPhone, versión de iOS (Ajustes → General → Información), qué pasos fallaron y los tiempos.
+
+### Canvas
+Pulsa "Medir" con el tope en **8**. Si la pestaña se recarga sola o se cierra, anótalo (ese es el dato). Si termina, repite con **16**. Copia los resultados.
+
+### S11
+"Medir 5 / 30 / 80 MB" → "Crear proyecto de 200 MB y exportar ZIP" (se guarda en Archivos) → "Importar ZIP" eligiendo ese archivo → "Copiar resultados" → "Borrar datos". Para la política de borrado de Safari: deja datos guardados, no abras la página ni la app 8 días y vuelve a abrirla (la página mostrará si los datos siguen).
