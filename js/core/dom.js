@@ -20,5 +20,15 @@ export function h(tag, attrs = {}, ...hijos) {
 }
 
 /** Formatos en español: 28,4 MB · 1.234 */
-export const fmtMB = (bytes, dec = 1) => `${(bytes / 1e6).toLocaleString('es-DO', { minimumFractionDigits: dec, maximumFractionDigits: dec })} MB`;
-export const fmtNum = (n) => n.toLocaleString('es-DO');
+export const fmtMB = (bytes, dec = 1) => `${(bytes / 1e6).toLocaleString('es', { minimumFractionDigits: dec, maximumFractionDigits: dec })} MB`;
+export const fmtNum = (n) => n.toLocaleString('es');
+
+/** Descarga un Blob con un nombre (en iPhone abre la hoja de «Guardar en Archivos»). */
+export function descargarBlob(blob, nombre) {
+  const url = URL.createObjectURL(blob);
+  // Chromium descarta el nombre entero si lleva rayas tipográficas (— –): medido el 24-nov-2026.
+  const a = h('a', { href: url, download: String(nombre).replace(/[\u2013\u2014]/g, '-'), hidden: true });
+  document.body.append(a); a.click();
+  // Chromium lee el atributo download después del clic: si el enlace se quita al instante, el nombre se pierde.
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 60000);
+}

@@ -8,10 +8,12 @@ import { vistaInicio } from './vistas/inicio.js';
 import { vistaProyectos } from './vistas/proyectos.js';
 import { vistaAjustes } from './vistas/ajustes.js';
 import { vistaModulo } from './vistas/modulo.js';
+import { vistaProyecto } from './vistas/proyecto.js';
 
 const RUTAS = [
   { pattern: '/', name: 'inicio' }, { pattern: '/proyectos', name: 'proyectos' },
   { pattern: '/ajustes', name: 'ajustes' }, { pattern: '/m/:id', name: 'modulo' },
+  { pattern: '/proyectos/:id', name: 'proyecto' },
 ];
 
 export function iniciarShell({ version, extras = {} } = {}) {
@@ -38,11 +40,12 @@ export function iniciarShell({ version, extras = {} } = {}) {
     main.replaceChildren(zona);
     const enModulo = r.name === 'modulo';
     $('.volver').hidden = !enModulo; $('.marca').hidden = enModulo;
-    const pest = enModulo ? 'inicio' : r.name;
+    const pest = enModulo ? 'inicio' : r.name === 'proyecto' ? 'proyectos' : r.name;
     $$('.pestanas a').forEach((a) => (a.dataset.pest === pest ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
     if (r.name === 'inicio') await vistaInicio(zona, ctx);
     else if (r.name === 'proyectos') await vistaProyectos(zona, ctx);
     else if (r.name === 'ajustes') await vistaAjustes(zona, ctx);
+    else if (r.name === 'proyecto') await vistaProyecto(zona, ctx, r.params.id);
     else if (enModulo) {
       const m = await vistaModulo(zona, ctx, r.params.id);
       if (mio !== turno) { m?.desmontar?.(); return; } // el usuario ya navegó a otra parte
