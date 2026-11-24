@@ -6,7 +6,7 @@ import { createEngine, bibliography, cite } from '../js/cite.js';
 import { cslType } from '../js/lookup.js';
 import { normalizeDOI, normalizeISBN, lookupURL, guardedFetch } from '../js/net-guard.js';
 
-const r = (f) => readFileSync(new URL('../vendor/csl/' + f, import.meta.url), 'utf8');
+const r = (f) => readFileSync(new URL('../../../js/vendor/csl/' + f, import.meta.url), 'utf8');
 const items = JSON.parse(readFileSync(new URL('./items.json', import.meta.url), 'utf8'));
 const locales = { 'es-ES': r('locales-es-ES.xml'), 'en-US': r('locales-en-US.xml') };
 const eng = createEngine({ styleXml: r('apa-es.csl'), locales, items, lang: 'es-ES', format: 'text' });
