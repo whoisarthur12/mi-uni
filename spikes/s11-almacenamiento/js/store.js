@@ -21,7 +21,9 @@ export function openDB() {
   });
 }
 
-const done = (tx) => new Promise((ok, ko) => { tx.oncomplete = () => ok(); tx.onerror = () => ko(tx.error); tx.onabort = () => ko(tx.error || new Error('Transacción abortada')); });
+// WebKit en sesión efímera (como la navegación privada de Safari) rechaza Blobs con error null.
+const txError = (tx) => tx.error || Object.assign(new Error('El navegador no permitió guardar el archivo (¿navegación privada?).'), { code: 'STORE_REFUSED' });
+const done = (tx) => new Promise((ok, ko) => { tx.oncomplete = () => ok(); tx.onerror = () => ko(txError(tx)); tx.onabort = () => ko(txError(tx)); });
 const req = (r) => new Promise((ok, ko) => { r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error); });
 
 export async function createProject(db, nombre) {

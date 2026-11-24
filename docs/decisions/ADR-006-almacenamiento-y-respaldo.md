@@ -13,6 +13,8 @@
 7. **Espacio:** `storage.estimate()` solo como guía (en WebKit `usage` = 0); la cuenta propia sale de `recursos`; capturar `QuotaExceededError` y abortar la transacción con mensaje claro.
 8. **Respaldo (por el riesgo de borrado en Safari):** `persist()` pedido con un gesto del usuario y explicación, sin depender de él; **recordatorio de exportar** cada 7 días con cambios sin exportar (fecha del último respaldo por proyecto); aviso fijo en iPhone de que instalar la app en la pantalla de inicio reduce el riesgo (a confirmar en el iPhone).
 
+9. **Navegación privada:** si guardar un Blob falla (WebKit efímero da error `null`), mensaje específico y la herramienta sigue funcionando sin proyecto.
+
 ## Consecuencias
 - Importar cuesta memoria del tamaño del archivo más grande (copia) y en escritorio el pico llegó a +640 MB (WebKit) por recolección de basura tardía. **En iPhone es el principal riesgo:** si la medición real falla, plan B = guardar archivos grandes en trozos de 8–16 MB (un registro por trozo) para que la copia nunca supere un trozo.
 - La verificación después de escribir duplica las lecturas al guardar/importar; se mantiene por seguridad de datos.

@@ -40,10 +40,12 @@ Releídos byte a byte: correctos en los 3. CRC-32 en JS: ~240 MB/s (Chromium) a 
 2. **`storage.estimate()` en WebKit:** `usage` siempre 0 y `quota` 1.000 MB, pero guardó **1.500 MB sin error**. No sirve para avisar de espacio en WebKit; hay que capturar `QuotaExceededError` y llevar la cuenta propia (los tamaños están en `recursos`).
 3. **`persist()`:** `false` en Chromium y WebKit sin interacción ni instalación; en Firefox queda **pendiente** (pide permiso). No se puede contar con él.
 4. Exportar no cuesta memoria (+0–10 MB) gracias al CRC precalculado. Importar sí (copia de un archivo a la vez + recolección de basura tardía): +280 a +640 MB de pico en escritorio. **Es el riesgo en iPhone.**
-5. ZIP propio: 2,4 KB gzip (`zip.js`) frente a 21,5 KB gzip de `fflate` 0.8.2 (MIT). No hace falta la dependencia; límite asumido: sin ZIP64 (máx. 4 GiB y 65.535 archivos por proyecto, con error claro).
+5. **WebKit en sesión efímera** (contexto de Playwright sin perfil, equivalente a la navegación privada de Safari): guardar un Blob en IndexedDB falla con error `null` (perfil persistente: bien). La app debe detectarlo y decir "en navegación privada no se pueden guardar archivos". Confirmar en Safari iOS privado.
+6. ZIP propio: 2,4 KB gzip (`zip.js`) frente a 21,5 KB gzip de `fflate` 0.8.2 (MIT). No hace falta la dependencia; límite asumido: sin ZIP64 (máx. 4 GiB y 65.535 archivos por proyecto, con error claro).
 
 ### No verificado
 - **Safari iOS:** cuota real, borrado tras 7 días sin uso y si las apps en pantalla de inicio están exentas. Lo que se sabe viene de publicaciones de WebKit; `webkit.org` está bloqueado en la red de esta sesión y no pude citarlas. Además, WebKit en Linux no reproduce las políticas de iOS. → Medir en el iPhone con esta página (y repetirla a los 8 días sin abrirla).
+- Safari iOS en navegación privada (ver hallazgo 5).
 - `QuotaExceededError` en Chromium/Firefox (cuota de 10 GB: no se llenó).
 
 ## Cómo probar en el celular

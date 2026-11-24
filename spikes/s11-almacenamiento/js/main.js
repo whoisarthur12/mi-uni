@@ -103,4 +103,17 @@ $('#persist').onclick = persist;
 $('#copy').onclick = async () => { try { await navigator.clipboard.writeText(JSON.stringify(results)); } catch { /* copiar a mano */ } };
 $('#wipe').onclick = async () => { db && db.close(); db = null; await new Promise((ok) => { const r = indexedDB.deleteDatabase('mi-uni-s11'); r.onsuccess = r.onerror = r.onblocked = ok; }); log('borrado', { estimate: await estimate() }); };
 
-window.__s11 = { benchBlobs, makeProject, exportProject, importFile, compare, fillUntilError, persist, estimate, results };
+// Al abrir: qué hay guardado (sirve para la prueba de borrado de Safari tras 8 días sin uso).
+async function inventory() {
+  await ready();
+  const ps = await new Promise((ok, ko) => { const r = db.transaction('proyectos').objectStore('proyectos').getAll(); r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error); });
+  let bytes = 0; for (const p of ps) for (const r of await S.listResources(db, p.id)) bytes += r.size;
+  const last = ps.map((p) => p.importado || p.creado).sort().at(-1) || null;
+  $('#saved').textContent = ps.length
+    ? `Datos guardados: ${ps.length} proyecto(s), ${(bytes / MB).toFixed(0)} MB; el más reciente del ${new Date(last).toLocaleString('es-DO')}`
+    : 'No hay datos guardados en este navegador.';
+  log('inventario', { proyectos: ps.length, mb: Math.round(bytes / MB), ultimo: last });
+}
+inventory().catch((e) => { $('#saved').textContent = 'No se pudo leer IndexedDB: ' + e.message; });
+
+window.__s11 = { inventory, benchBlobs, makeProject, exportProject, importFile, compare, fillUntilError, persist, estimate, results };
