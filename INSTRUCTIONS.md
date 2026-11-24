@@ -133,7 +133,7 @@ Objetivo: **resolver las dudas de `CONTEXT.md` §7 antes de construir nada grand
 ### FASE 1 — Shell, núcleo, perfil y proyectos  ·  esfuerzo L
 Construir la base sobre la que se apoyan todos los módulos.
 
-> **Fase 1 mínima (ADR-011):** primero el shell y la navegación, el perfil y el almacenamiento de S11 (verificación al escribir, importación por trozos, ZIP y aviso de respaldo desde el inicio), con el **Compresor de PDF (2.2) como primer módulo utilizable**. El buscador, el diagnóstico y el catálogo completo de eventos van después del Compresor y antes del hito MVP. **Antes de la interfaz:** 2 o 3 direcciones de diseño en `/mi-uni/diseno/` para que el dueño elija.
+> **Fase 1 mínima (ADR-011):** primero el shell y la navegación, el perfil y el almacenamiento de S11 (verificación al escribir, importación por trozos, ZIP y aviso de respaldo desde el inicio), con el **Compresor de PDF (2.2) como primer módulo utilizable**. El buscador, el diagnóstico y el catálogo completo de eventos van después del Compresor y antes del hito MVP. **Antes de la interfaz:** 2 o 3 direcciones de diseño en `/mi-uni/diseno/` para que el dueño elija. Elegida: B con la paleta de `docs/ESTILO.md` ([ADR-013](docs/decisions/ADR-013-sistema-visual.md)); sus tokens son el `ui-kit`.
 
 **Tareas**
 1. `index.html`, `manifest.webmanifest` (rutas relativas, íconos 192/512/maskable, `display: standalone`) y estructura del repositorio.
