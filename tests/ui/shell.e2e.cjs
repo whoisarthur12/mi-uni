@@ -18,7 +18,7 @@ async function caso(n) {
   p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => { if (['error', 'warning'].includes(m.type())) errs.push(m.text().slice(0, 160)); });
   const paso = async (k, fn) => { try { r[k] = await fn(); } catch (e) { r[k] = 'ERROR ' + String(e.message).slice(0, 200); } };
   try {
-    await ctl('shellVersion=1&down=false');
+    await ctl('shellVersion=2&down=false');
     await paso('1 instala y controla', async () => {
       await p.goto(BASE); await p.waitForSelector('.rejilla .tarjeta');
       await p.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 30000 });
@@ -53,7 +53,7 @@ async function caso(n) {
     });
     await paso('6 actualización', async () => {
       await p.goto(BASE + '#/ajustes'); await p.waitForSelector('.segmentos');
-      await ctl('shellVersion=2');
+      await ctl('shellVersion=3');
       await p.click('text=Buscar actualización');
       await p.waitForSelector('#actualizacion:not([hidden])', { timeout: 30000 });
       await Promise.all([p.waitForEvent('load', { timeout: 30000 }), p.click('#aplicar-actualizacion')]);
@@ -61,7 +61,7 @@ async function caso(n) {
       await p.waitForTimeout(500);
       return p.evaluate(async () => (await caches.keys()).sort());
     });
-  } finally { await sinRed(n, ctx, false).catch(() => {}); await ctl('shellVersion=1'); await ctx.close(); fs.rmSync(dir, { recursive: true, force: true }); }
+  } finally { await sinRed(n, ctx, false).catch(() => {}); await ctl('shellVersion=2'); await ctx.close(); fs.rmSync(dir, { recursive: true, force: true }); }
   r.consola = errs;
   return r;
 }
