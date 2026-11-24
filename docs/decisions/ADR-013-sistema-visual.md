@@ -1,6 +1,6 @@
 # ADR-013 — Sistema visual: dirección B con la paleta cálida de ESTILO.md
 
-- **Estado:** **propuesta**. Diseño elegido por el dueño (24-nov-2026): «B (Panel) con el sistema visual de `docs/ESTILO.md`». **Falta su aprobación de la maqueta** antes de la Fase 1. Maqueta: `diseno/` (`/mi-uni/diseno/` en Pages).
+- **Estado:** **aceptada** por el dueño (24-nov-2026): maqueta «B (Panel) con el sistema visual de `docs/ESTILO.md`» y este ADR aprobados. Maqueta: `diseno/` (`/mi-uni/diseno/` en Pages). Sus tokens son el ui-kit de la app (`css/ui.css`).
 - **Contexto:** la referencia [`docs/ESTILO.md`](../ESTILO.md) describe una web de marketing de terceros. Mi Uni es una app: se toma el sistema (color, forma, ritmo, tipografía) y se descarta lo propio de una web de ventas.
 
 ## Se usa

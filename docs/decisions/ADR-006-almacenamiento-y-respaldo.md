@@ -1,6 +1,7 @@
 # ADR-006 — Almacenamiento de proyectos, exportación ZIP y respaldo
 
 - **Estado:** **aceptada como provisional** por el dueño (24-nov-2026) con tres condiciones, ya incorporadas abajo. Pasa a definitiva tras medir en el iPhone.
+- **Implementación (Fase 1, bloque 3):** `js/core/proyectos.js`, `zip.js` y `respaldo.js`, con las tres condiciones. Medido en la app: trozos de 8 MB verificados, ZIP exportado e importado idéntico, ZIP dañado rechazado sin dejar nada, limpieza tras un corte, e importación de 200 MB con un pico de +258 / +171 / +141 MB (Chromium / Firefox / WebKit). Sigue provisional hasta la prueba de 8 días en el iPhone (hasta el 2-dic-2026).
 - **Contexto:** los proyectos guardan PDFs e imágenes de decenas de MB en el navegador (CONTEXT §8.6). Hay que poder exportarlos e importarlos como ZIP (~200 MB) sin servidor, y el navegador puede borrar los datos (Safari) o quedarse sin espacio. Datos en `spikes/s11-almacenamiento/README.md`.
 
 ## Decisión

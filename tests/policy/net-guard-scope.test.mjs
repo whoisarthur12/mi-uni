@@ -41,7 +41,8 @@ export function violations(file, src) {
   const v = [];
   if (file.startsWith('js/vendor/')) return v; // código de terceros: revisado aparte (ADR-008)
   for (const h of HOSTS) if (src.includes(h) && !allowed(file, ALLOW_HOSTS)) v.push(`menciona ${h}`);
-  if (/net-guard(\.js)?['"]|\bguardedFetch\b|\blookupURL\b/.test(src) && !allowed(file, ALLOW_IMPORT)) v.push('usa el net-guard');
+  // Importar net-guard para fetchLocal (propio sitio) está permitido; la EXCEPCIÓN externa (guardedFetch/lookupURL) no.
+  if (/\bguardedFetch\b|\blookupURL\b|s5-citas\/js\/net-guard/.test(src) && !allowed(file, ALLOW_IMPORT)) v.push('usa el net-guard');
   if (PROD.some((d) => file.startsWith(d)) && file !== 'js/core/net-guard.js') {
     if (/\b(fetch|importScripts|sendBeacon)\s*\(\s*['"`]https?:/.test(src) || /new\s+(WebSocket|EventSource|XMLHttpRequest)\b/.test(src)) v.push('red directa en código de producción');
     if (/\bfetch\s*\(/.test(src)) v.push('fetch fuera del net-guard (usar core/net-guard o rutas propias vía core)');
@@ -52,6 +53,7 @@ export function violations(file, src) {
 test('el detector reconoce violaciones (casos sintéticos)', () => {
   assert.deepEqual(violations('spikes/s9-graficos/js/x.js', 'fetch("https://api.crossref.org/works/1")'), ['menciona api.crossref.org']);
   assert.deepEqual(violations('spikes/s4/js/a.js', "import { guardedFetch } from '../../s5-citas/js/net-guard.js'"), ['usa el net-guard']);
+  assert.deepEqual(violations('js/core/offline.js', "import { fetchLocal } from './net-guard.js'; fetchLocal(u)"), []);
   assert.ok(violations('js/modules/compresor/index.js', "fetch('https://evil.example/x')").includes('red directa en código de producción'));
   assert.deepEqual(violations('spikes/s5-citas/js/net-guard.js', "const A = 'https://api.crossref.org'"), []);
   assert.deepEqual(violations('spikes/s5-citas/js/lookup.js', "import { guardedFetch } from './net-guard.js'"), []);
