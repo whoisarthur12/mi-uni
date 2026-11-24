@@ -249,3 +249,18 @@ main { max-width: 40rem; margin: 0 auto; padding: 0 max(20px, env(safe-area-inse
 .enlace-titulo { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; color: var(--tinta); text-decoration: none; }
 @media (hover: hover) { .enlace-titulo:hover .tarjeta-titulo { text-decoration: underline; text-underline-offset: 3px; } }
 
+
+/* Compresor */
+.pila + .pila, .archivo + .pila { margin-top: var(--paso); }
+input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--tinta); }
+.opcion-check { display: flex; align-items: center; gap: 12px; min-height: 48px; cursor: pointer; }
+.opcion-check input { width: 22px; height: 22px; margin: 0; accent-color: var(--tinta); }
+.grupo .campo input[type="text"] { min-height: 48px; padding: 0 14px; border: 1px solid var(--borde-campo); border-radius: 9999px; background: var(--lienzo); color: var(--tinta); font: inherit; }
+.efectos { margin: 6px 0 4px; padding-left: 1.2rem; display: grid; gap: 4px; }
+.comparar { margin-top: var(--ritmo); }
+.comp-vista { overflow: auto; border-radius: var(--radio); background: var(--inset); max-height: 70vh; }
+.comp-marco { position: relative; display: inline-block; line-height: 0; }
+.comp-marco canvas { display: block; height: auto; }
+.comp-antes { position: absolute; inset: 0 auto auto 0; }
+.comp-controles { display: flex; align-items: center; gap: var(--paso); margin: 6px 0 var(--paso); }
+.lista-dialogo { max-height: 50vh; overflow: auto; margin: 0; }

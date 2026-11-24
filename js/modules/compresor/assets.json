@@ -11,6 +11,36 @@
    "path": "../../vendor/ghostpdl-wasm-1.1.0/gs.wasm",
    "size": 15533045,
    "sha256": "e8aaf3af75da65fe0af8d49b30fa717e4ff13eedbbdc0cdd5700f54fb8f667e6"
+  },
+  {
+   "path": "../../vendor/pdfjs-6.5.438/pdf.min.mjs",
+   "size": 474284,
+   "sha256": "3a88402882cfa3e7e72c2c9b5149f52f0f88baf1c5b62aa11a41abdbc2072440"
+  },
+  {
+   "path": "../../vendor/pdfjs-6.5.438/pdf.worker.min.mjs",
+   "size": 1271915,
+   "sha256": "1e64c8240e54735ec5913b37acd5134747799cb8c6bb3777c70adbc01232d2aa"
+  },
+  {
+   "path": "../../vendor/pdfjs-6.5.438/wasm/jbig2.wasm",
+   "size": 103671,
+   "sha256": "466f45c2a61a698152fb5400c27e56ff2ceb73dcb71fde3fc366a502308eaab0"
+  },
+  {
+   "path": "../../vendor/pdfjs-6.5.438/wasm/openjpeg.wasm",
+   "size": 220817,
+   "sha256": "7ea4b2b04613370ad4e9c1162da750cc88b4b176eac0d0c164b3caff23fc0a46"
+  },
+  {
+   "path": "../../vendor/pdfjs-6.5.438/wasm/qcms_bg.wasm",
+   "size": 96589,
+   "sha256": "663d86126d5f5fcb1c61490f94353e2a8375660b8c5498ab3ebab5a34b08800e"
+  },
+  {
+   "path": "../../vendor/cantoo-pdf-lib-2.11.1/pdf-lib.esm.min.js",
+   "size": 614304,
+   "sha256": "ac197f002ca7b6f7789334be108ee13a97928b561eafa774d303d43bb7dd7fd1"
   }
  ]
 }

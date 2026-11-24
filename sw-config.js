@@ -5,7 +5,7 @@
 
   // Subir SHELL_VERSION en cada publicación que cambie un archivo del shell (si no, los teléfonos
   // con la app instalada seguirían con la versión vieja hasta que se borre la caché).
-  const SHELL_VERSION = 3;
+  const SHELL_VERSION = 4;
   const PRECACHE_MODE = 'reload'; // salta la caché HTTP de Pages (max-age=600)
 
   const SHELL_FILES = [
@@ -14,7 +14,7 @@
     './js/core/router.js', './js/core/net-guard.js', './js/core/workers.js', './js/core/lockdown.js',
     './js/core/sw-client.js', './js/core/offline.js', './js/core/theme.js', './js/core/dom.js', './js/core/icons.js',
     './js/core/hooks.js', './js/core/db.js', './js/core/ajustes.js', './js/core/ajustes-modelo.js',
-    './js/core/proyectos.js', './js/core/zip.js', './js/core/respaldo.js', './js/core/dialogo.js',
+    './js/core/proyectos.js', './js/core/zip.js', './js/core/respaldo.js', './js/core/dialogo.js', './js/core/memoria.js', './js/core/memoria-modelo.js',
     './js/shell/shell.js', './js/shell/registry.js',
     './js/shell/vistas/inicio.js', './js/shell/vistas/proyectos.js', './js/shell/vistas/ajustes.js', './js/shell/vistas/modulo.js', './js/shell/vistas/proyecto.js',
     './js/vendor/inter-4.001/inter-latin-wght-normal.woff2',
@@ -27,10 +27,20 @@
   const MODULES = {
     compresor: {
       version: 1,
-      files: ['js/modules/compresor/index.js'],
+      // Código liviano del módulo y del motor PDF compartido (js/engines/pdf, INSTRUCTIONS 2.1).
+      files: [
+        'js/modules/compresor/index.js', 'js/modules/compresor/motor.js', 'js/modules/compresor/busqueda.js',
+        'js/modules/compresor/escala.js', 'js/modules/compresor/gs-args.js', 'js/modules/compresor/gs-worker.js',
+        'js/engines/pdf/motores.js', 'js/engines/pdf/pdf-open.js', 'js/engines/pdf/output-guard.js', 'js/engines/pdf/pesos.js',
+      ],
       assets: {
         manifest: 'js/modules/compresor/assets.json',
-        files: ['js/vendor/ghostpdl-wasm-1.1.0/gs.js', 'js/vendor/ghostpdl-wasm-1.1.0/gs.wasm'],
+        files: [
+          'js/vendor/ghostpdl-wasm-1.1.0/gs.js', 'js/vendor/ghostpdl-wasm-1.1.0/gs.wasm',
+          'js/vendor/pdfjs-6.5.438/pdf.min.mjs', 'js/vendor/pdfjs-6.5.438/pdf.worker.min.mjs',
+          'js/vendor/pdfjs-6.5.438/wasm/jbig2.wasm', 'js/vendor/pdfjs-6.5.438/wasm/openjpeg.wasm', 'js/vendor/pdfjs-6.5.438/wasm/qcms_bg.wasm',
+          'js/vendor/cantoo-pdf-lib-2.11.1/pdf-lib.esm.min.js',
+        ],
       },
     },
   };

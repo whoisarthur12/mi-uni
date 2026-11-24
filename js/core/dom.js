@@ -20,7 +20,9 @@ export function h(tag, attrs = {}, ...hijos) {
 }
 
 /** Formatos en español: 28,4 MB · 1.234 */
-export const fmtMB = (bytes, dec = 1) => `${(bytes / 1e6).toLocaleString('es', { minimumFractionDigits: dec, maximumFractionDigits: dec })} MB`;
+export const fmtMB = (bytes, dec = bytes < 1e6 ? 2 : 1) => (bytes > 0 && bytes < 100_000
+  ? `${Math.max(1, Math.round(bytes / 1000)).toLocaleString('es')} KB`
+  : `${(bytes / 1e6).toLocaleString('es', { minimumFractionDigits: dec, maximumFractionDigits: dec })} MB`);
 export const fmtNum = (n) => n.toLocaleString('es');
 
 /** Descarga un Blob con un nombre (en iPhone abre la hoja de «Guardar en Archivos»). */
