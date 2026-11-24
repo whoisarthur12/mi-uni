@@ -16,7 +16,7 @@ Estado: **Fase 1 mínima** (ADR-011). App: `https://whoisarthur12.github.io/mi-u
 | `sw.js`, `sw-config.js` | Service worker: shell en caché versionada, módulos livianos y descarga explícita de los pesados (ADR-005) |
 | `css/ui.css` | ui-kit: tokens y componentes de la maqueta aprobada (ADR-013) |
 | `js/app.js`, `js/shell/` | Router por hash, cabecera, pestañas, vistas y catálogo de herramientas |
-| `js/core/` | Núcleo: `router`, `net-guard` (única salida de red: solo el propio sitio), `workers` (única fábrica de workers: `blob:` + `lockdown`), `offline`, `sw-client`, `theme`, `hooks` (eventos, diagnóstico y buscador mínimos) |
+| `js/core/` | Núcleo: `router`, `net-guard` (única salida de red: solo el propio sitio), `workers` (única fábrica de workers: `blob:` + `lockdown`), `offline`, `sw-client`, `theme`, `db` (IndexedDB versionada), `ajustes` (perfil), `proyectos` + `zip` + `respaldo` (ADR-006), `dialogo`, `hooks` (eventos, diagnóstico y buscador mínimos) |
 | `js/modules/<id>/` | Herramientas; se cargan con `import()` al abrirlas |
 | `js/vendor/` | Dependencias fijadas (versiones en `js/vendor/VERSIONS.md`) |
 
@@ -29,6 +29,12 @@ node spikes/s10-plataforma/runner/pages-server.cjs
 ```
 ```bash
 node tests/ui/shell.e2e.cjs
+```
+```bash
+node tests/ui/ajustes.e2e.cjs
+```
+```bash
+node tests/ui/proyectos.e2e.cjs chromium,firefox,webkit --grande
 ```
 ```bash
 node tools/auditar.cjs tests/ui/app.auditoria.cjs
