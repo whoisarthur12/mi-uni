@@ -37,3 +37,11 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S10 canvas | JPEG 4000×3000 q0,85 | página / worker | 93–96 / 69–103 / 249–402 ms | — | — | los 3 | |
 | S10 PWA | instalabilidad bajo `/mi-uni/` | CDP | ✅ 0 errores | — | — | Chromium 158 | |
 | S10 shell | peso del shell del spike | gzip -9 | 27,8 KB / 11,9 KB gzip | — | — | — | Presupuesto: ≤ 150 KB |
+| S11 IndexedDB | blobs aleatorios 5 / 30 / 80 MB | guardar (con CRC) | ✅ releídos idénticos; 80 MB: 448 / 1.377 / 565 ms | leer 80 MB: 57 / 306 / 352 ms | +374 / +410 / +667 MB | Chromium 158 · Firefox 155 · WebKit 26.6 (perfil en disco) | |
+| S11 ZIP | proyecto 200 MB (5 archivos) [SINT] | exportar STORE | ✅ `zipfile.testzip()` OK | 0,84 / 0,98 / 0,50 s | +10 / +4 / +0 MB | los 3 | CRC precalculado: sin copiar datos |
+| S11 ZIP | mismo ZIP | importar (CRC antes y después) | ✅ idéntico; también en perfil limpio | 2,5 / 7,8 / 3,1 s | +279 / +372 / +640 MB | los 3 | |
+| S11 ZIP | ZIP con un byte alterado | importar | ✅ rechazado, nada escrito | 0,7 / 2,6 / 0,8 s | — | los 3 | |
+| S11 ZIP | importación cortada (navegador cerrado) | limpieza al arrancar | ✅ 0 blobs huérfanos | — | — | los 3 | |
+| S11 IndexedDB | `File.slice()` guardado tal cual | — | ❌ se relee el File entero | — | — | WebKit 26.6 | Chromium/Firefox OK; copiar con arrayBuffer() lo corrige |
+| S11 cuota | llenar de 50 en 50 MB | tope 1.500 MB | sin error a 1.500 MB; `estimate()` usage 0 / quota 1.000 | 22 s | — | WebKit 26.6 | estimate() inútil en WebKit |
+| S11 persist | `navigator.storage.persist()` | sin gesto | false / pendiente / false | — | — | los 3 | |

@@ -204,7 +204,9 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 14. **Wake Lock, `OffscreenCanvas`, módulos en Workers** y otras APIs: confirmar versiones mínimas de Safari iOS.
    - **✅ Resuelto (S10, MDN BCD 8.1.10):** workers módulo iOS 15; `OffscreenCanvas` iOS 16.4; `'wasm-unsafe-eval'` iOS 16; Wake Lock iOS 18.4. Propuesta: mínimo **Safari iOS 16.4**; Wake Lock opcional. Tabla en `spikes/s10-plataforma/README.md`.
 15. **Cuota y persistencia de IndexedDB:** límites reales por navegador (sobre todo Safari/iOS), si `navigator.storage.persist()` se concede, y si el navegador puede **borrar datos** de sitios que no se usan durante un tiempo (en Safari hay políticas de este tipo; comprobar si las apps instaladas en pantalla de inicio están exentas). Condiciona el diseño del respaldo.
+   - **Fase 0 (S11, parcial):** `persist()` no se concede sin gesto/instalación (Chromium, WebKit) y en Firefox pide permiso; `estimate()` en WebKit no cuenta los blobs. Cuota y borrado de Safari iOS **sin medir** (página `spikes/s11-almacenamiento/` lista). Estrategia en ADR-006: recordatorio de respaldo + ZIP.
 16. **Proyectos con archivos grandes:** comportamiento al guardar *blobs* de decenas de MB en IndexedDB, rendimiento al exportar/importar un proyecto a ZIP de cientos de MB en celulares y si hace falta procesar por trozos.
+   - **Fase 0 (S11):** 5–80 MB en IndexedDB y proyecto de 200 MB a ZIP e importado idéntico en los 3 motores (exportar < 1 s sin coste de memoria; importar 2,5–7,8 s, +280–640 MB de pico en escritorio). Bug de WebKit con `File.slice()` → copiar antes de guardar. iPhone pendiente (ADR-006).
 
 ---
 
