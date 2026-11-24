@@ -1,0 +1,4 @@
+node_modules/
+spikes/**/fixtures-gen/
+*.log
+.DS_Store
