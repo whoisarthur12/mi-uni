@@ -1,0 +1,3 @@
+.thumbs { display: flex; flex-wrap: wrap; gap: 6px; max-height: 50vh; overflow: auto; }
+.thumbs canvas { border: 1px solid var(--line); width: 100px; height: auto; }
+.thumbs img.thumb { border: 1px solid var(--line); width: 100px; height: auto; }
