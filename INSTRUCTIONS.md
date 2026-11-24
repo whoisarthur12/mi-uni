@@ -364,6 +364,16 @@ Cada fila de `tests/results.md` registra: módulo, archivo, parámetros, **resul
 
 ---
 
+### 9.1 Red del entorno de desarrollo (ADR-009)
+El entorno en la nube donde trabaja el agente tiene red limitada. Hosts añadidos con aprobación del dueño (lista exacta; se mantiene igual que en ADR-009):
+- `cdn.playwright.dev` (navegadores de prueba)
+- `api.crossref.org`, `openlibrary.org`, `www.googleapis.com` (S5: medición de DOI/ISBN)
+
+Además están permitidos los registros de paquetes (npm, PyPI, apt) y los servidores MCP. **Cualquier ampliación futura pasa por el dueño:** pedirla explicando para qué, esperar su aprobación, y registrarla aquí y en ADR-009. La red del entorno de desarrollo **no** amplía lo que puede hacer la app.
+
+### 9.2 Única excepción de red de la app (ADR-007)
+La app solo puede salir de su propio origen para consultas de **DOI/ISBN** a `api.crossref.org`, `openlibrary.org` y `www.googleapis.com`, a petición explícita del usuario y enviando solo el identificador. La excepción vive **únicamente** en el net-guard; `node --test tests/policy/net-guard-scope.test.mjs` falla si cualquier otro archivo la usa. Esta prueba se ejecuta antes de cada PR.
+
 ## 10. Ficha técnica y documentación por módulo (`docs/modules/<id>.md`)
 
 ### 10.1 Ficha técnica (se escribe ANTES de programar; la aprueba el dueño)

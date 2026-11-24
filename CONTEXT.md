@@ -198,9 +198,9 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 8. **Mermaid:** exportar a PNG puede fallar por etiquetas con `foreignObject` (contaminan el canvas); verificar la configuración que permite exportar bien.
 9. **Ecuaciones a Word:** pegar MathML en Word y su comportamiento varía; convertir LaTeX a OMML (formato nativo de Word) no es trivial y puede tener restricciones de licencia en herramientas de Microsoft. Plan B: exportar la ecuación como imagen (PNG/SVG).
 10. **CSL:** peso de los estilos y locales, comportamiento del procesador con las **variantes en español** (`es-ES`, `es-MX`, etc.) y licencia de los estilos.
-   - **✅ Resuelto (S5, ADR-008):** citeproc-js 2.4.63 (191 KB gzip, AGPL-3.0-or-later) + APA 13 KB + locale ~5 KB gzip; estilos CC BY-SA 3.0. Ningún locale oficial da APA en español (`es-ES`: guion en páginas; `es-MX`: "s/f", "6a ed."; ambos "&") → estilo derivado `apa-es.csl`, a validar con el reglamento de la universidad. Motor en worker (crear: 0,7–1,3 s).
+   - **✅ Resuelto (S5, ADR-008, aprobado):** citeproc-js 2.4.63 (191 KB gzip, AGPL-3.0-or-later) + APA 13 KB + locale ~5 KB gzip; estilos CC BY-SA 3.0. Ningún locale oficial da APA en español (`es-ES`: guion en páginas; `es-MX`: "s/f", "6a ed."; ambos "&") → estilo derivado `apa-es.csl`, **PROVISIONAL** (solo APA 7 en español; sin reglas de universidad hasta tener el reglamento). Motor en worker (crear: 0,7–1,3 s).
 11. **CORS de APIs de metadatos** (CrossRef por DOI, Open Library/Google Books por ISBN): confirmar que responden desde un navegador, sus límites y cuáles necesitan clave. **Obtener metadatos desde una URL cualquiera no es viable sin servidor** por CORS: ofrecer formulario manual.
-   - **✅ Resuelto (S5, ADR-007):** CrossRef y Open Library responden por CORS (`*`) desde el navegador en los 3 motores; Google Books sin clave dio 429 (cuota agotada) → solo respaldo. Única excepción del net-guard: 3 hosts, a petición del usuario, solo DOI/ISBN, sin Referer ni cookies.
+   - **✅ Resuelto (S5, ADR-007):** CrossRef y Open Library responden por CORS (`*`) desde el navegador en los 3 motores; Google Books sin clave dio 429 (cuota agotada) → ISBN solo por Open Library; Google Books respaldo **sin clave** (decisión del dueño). Entrada manual siempre disponible y autores editables antes de guardar. Única excepción del net-guard (ADR-007, aprobado; prueba `tests/policy/net-guard-scope.test.mjs`): 3 hosts, a petición del usuario, solo DOI/ISBN, sin Referer ni cookies.
 12. **Fórmulas de legibilidad en español** (Fernández-Huerta, Szigriszt-Pazos/INFLESZ): verificar coeficientes contra la fuente original antes de publicarlas, y la calidad del contador de sílabas.
 13. **`File System Access API`** solo existe en navegadores Chromium; hay que garantizar la alternativa (descarga clásica).
 14. **Wake Lock, `OffscreenCanvas`, módulos en Workers** y otras APIs: confirmar versiones mínimas de Safari iOS.
@@ -399,7 +399,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 **Qué hace.**
 - Guarda **un perfil del estudiante**: nombre completo, universidad, facultad/escuela, carrera, matrícula (opcional), ciudad, idioma.
 - Guarda **cursos/materias** del periodo: nombre, código, profesor, sección, periodo académico. Se pueden archivar al terminar el semestre.
-- Ofrece **valores por defecto**: tamaño de papel (Carta), estilo de cita preferido, fuente y tamaño habituales.
+- Ofrece **valores por defecto, configurables por el usuario**: tamaño de papel (Carta), **márgenes**, estilo de cita (por defecto **APA 7**, adaptación al español **provisional**, ADR-008), fuente y tamaño habituales. Las reglas propias de una universidad solo se añaden cuando el dueño entregue su reglamento: **no se inventan**.
 - Expone a los módulos una API simple: `ctx.profile.get()`, `ctx.profile.curso(id)` y suscripción a cambios.
 - **Autocompleta** portadas, portadas de cuaderno (plantillas), diapositiva de título (presentaciones) y las materias del armador de horarios.
 
@@ -559,7 +559,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 **Qué hace.**
 - **Biblioteca personal** (IndexedDB): tipo de fuente (libro, capítulo, artículo, web, tesis, informe, video, etc.), autores, año, título, editorial/revista, volumen/número/páginas, DOI, URL, fecha de consulta, **notas** y **etiquetas**; agrupar por **proyecto/tarea**.
 - **Importar/exportar:** BibTeX, RIS y **CSL JSON**.
-- **Búsqueda de metadatos:** por **DOI** (CrossRef) y por **ISBN** (Open Library/Google Books), que **requieren internet**; el usuario las lanza explícitamente y la app lo indica. **Por URL: formulario manual** (no es posible leer páginas arbitrarias desde el navegador).
+- **Búsqueda de metadatos:** por **DOI** (CrossRef) y por **ISBN** (Open Library; Google Books solo como respaldo **sin clave**, ADR-007), que **requieren internet**; el usuario las lanza explícitamente y la app lo indica. **Por URL: formulario manual** (no es posible leer páginas arbitrarias desde el navegador). La **entrada manual** siempre está disponible y los **autores son editables** antes de guardar.
 - **Generar:** lista de **referencias/bibliografía** y **citas en el texto** (entre paréntesis y narrativa), en **APA 7** (principal) y otros estilos (IEEE, MLA, Chicago, Vancouver, Harvard…), con idioma español.
 - **Copiar con formato** (HTML enriquecido, para pegar en Word conservando cursivas) y exportar a `.docx`, `.md` y `.txt`.
 
