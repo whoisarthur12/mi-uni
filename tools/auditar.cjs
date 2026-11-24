@@ -15,14 +15,14 @@ const AUDIT = () => {
   const textos = []; const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let n; (n = tw.nextNode());) { const el = n.parentElement; if (!n.textContent.trim() || !vis(el) || el.closest('.sr,.saltar')) continue; const fg = parse(getComputedStyle(el).color); const bg = bgOf(el); const c = blend(fg, bg); const L1 = lum(c), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); textos.push({ t: n.textContent.trim().slice(0, 30), ratio: Math.round(ratio * 100) / 100, fg: getComputedStyle(el).color, bg: `rgb(${Math.round(bg.r)},${Math.round(bg.g)},${Math.round(bg.b)})` }); }
   for (const i of document.querySelectorAll('input[placeholder]')) { if (!vis(i)) continue; const fg = parse(getComputedStyle(i, '::placeholder').color); const bg = bgOf(i); const L1 = lum(blend(fg, bg)), L2 = lum(bg); textos.push({ t: 'placeholder ' + i.placeholder, ratio: Math.round((Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05) * 100) / 100, fg: getComputedStyle(i, '::placeholder').color, bg: '' }); }
-  const toques = []; for (const e of document.querySelectorAll('a[href],button,input,select,label.opcion,[role=radio]')) { if (!vis(e)) continue; if (e.parentElement.closest('a[href],button,label.opcion')) continue; if (e.matches('.opcion input')) continue; const r = e.getBoundingClientRect(); toques.push({ t: (e.textContent || e.getAttribute('aria-label') || e.placeholder || e.tagName).trim().slice(0, 24), w: Math.round(r.width), h: Math.round(r.height) }); }
+  const toques = []; for (const e of document.querySelectorAll('a[href],button,input,select,label.opcion,label.opcion-check,[role=radio]')) { if (!vis(e)) continue; if (e.parentElement.closest('a[href],button,label.opcion')) continue; if (e.matches('.opcion input, .opcion-check input')) continue; const r = e.getBoundingClientRect(); toques.push({ t: (e.textContent || e.getAttribute('aria-label') || e.placeholder || e.tagName).trim().slice(0, 24), w: Math.round(r.width), h: Math.round(r.height) }); }
   return { textos, toques, fuente: document.fonts.check('16px Inter'), base: getComputedStyle(document.documentElement).fontSize };
 };
 async function auditar(cfg, salida) {
   const res = {}; let fallos = 0;
   for (const n of ['chromium', 'firefox', 'webkit']) {
     const errs = [];
-    const r = res[n] = { textos: 0, peor: null, bajo45: [], pequenos: [], errs, fuente: null };
+    const r = res[n] = { textos: 0, peor: null, bajo45: [], pequenos: [], errs, fuente: null, pares: {} };
     for (const scheme of ['light', 'dark']) {
       // Perfil persistente (como la app real): en WebKit una ventana efímera no deja guardar archivos en IndexedDB.
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), `aud-${n}-`));
@@ -37,7 +37,7 @@ async function auditar(cfg, salida) {
         await p.mouse.move(1, 1); await p.waitForTimeout(120);
         const a = await p.evaluate(AUDIT);
         r.fuente = a.fuente; r.textos += a.textos.length;
-        for (const t of a.textos) { if (!r.peor || t.ratio < r.peor.ratio) r.peor = { ...t, pantalla: pan.nombre, scheme }; if (t.ratio < 4.5) r.bajo45.push({ ...t, pantalla: pan.nombre, scheme }); }
+        for (const t of a.textos) { const k = `${scheme}|${t.fg}|${t.bg}`; const q = r.pares[k]; if (!q || t.ratio < q.ratio) r.pares[k] = { ratio: t.ratio, ejemplo: t.t, pantalla: pan.nombre, veces: (q?.veces || 0) + 1 }; else q.veces++; if (!r.peor || t.ratio < r.peor.ratio) r.peor = { ...t, pantalla: pan.nombre, scheme }; if (t.ratio < 4.5) r.bajo45.push({ ...t, pantalla: pan.nombre, scheme }); }
         for (const t of a.toques) if (t.h < 44 || t.w < 44) r.pequenos.push(`${pan.nombre}: ${t.t} ${t.w}×${t.h}`);
       }
       await ctx.close(); fs.rmSync(dir, { recursive: true, force: true });
