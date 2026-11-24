@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'; script-src 'self'; worker-src 'self' blob:">
+<title>Spike S10 — CSP variante sin-wasm</title>
+</head>
+<body>
+<h1>Spike S10 — CSP y workers</h1>
+<p>Prueba si cada tipo de worker puede conectarse a otro origen. Requiere el servidor testigo.</p>
+<pre id="out" aria-live="polite"></pre>
+<script type="module" src="./variants.js"></script>
+</body>
+</html>

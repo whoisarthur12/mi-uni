@@ -18,3 +18,11 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S1 memoria | sint-foto-80mb.pdf [SINT] ×3 | mismo worker | +395 MB pico | — | — | CI-headless | Acumula: un worker por pasada |
 | S1 memoria | sint-foto-30mb.pdf / 5mb [SINT] | 1 trabajo | +83–86 / +40–48 MB | 2,0 / 0,7 s | — | CI-headless | |
 | S1 memoria | split pdf-lib 80 MB en 4 | Node | maxRSS 200 MB (gs completo 204) | 0,29 s | — | Node 22 | Trocear no ahorra memoria |
+| S10 CSP | worker por URL (control) | CSP meta estricta | 6/6 vías llegan al testigo | — | — | Chromium 158 · Firefox 155 · WebKit 26.6 | La meta no rige workers por URL |
+| S10 CSP | (a) worker blob: | igual | 0 peticiones | — | — | los 3 | Hereda la CSP |
+| S10 CSP | (b) cabecera CSP inyectada por SW | página controlada | 0 peticiones | — | — | los 3 | Sin SW (1.ª visita) = control |
+| S10 CSP | (c) lockdown en worker por URL | igual | 1 petición (import()) | — | — | los 3 | import() no se puede parchear |
+| S10 CSP | (a)+(c) | igual | 0 peticiones | — | — | los 3 | Decisión ADR-004 |
+| S10 CSP | blob: crea worker por URL | worker-src 'self' blob: | 6 peticiones | — | — | los 3 | Cerrado por lockdown o worker-src sin 'self' |
+| S10 CSP | WASM en blob: sin 'wasm-unsafe-eval' | — | compilación bloqueada | — | — | los 3 | Obligatorio |
+| S10 CSP | Ghostscript en blob:+lockdown, sint-foto-5mb [SINT] | Module precompilado | ✅ código 0, 401.485 B | compilar 81–379 ms; init 9–15 ms; total ~750 ms | — | los 3 | |
