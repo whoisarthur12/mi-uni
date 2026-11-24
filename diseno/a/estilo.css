@@ -1,0 +1,87 @@
+/* Dirección A: tokens (claro / oscuro) y estilo propio. */
+:root {
+  --letra: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --radio-boton: 12px;
+  --fondo: #fbf8f3;
+  --fondo-barra: rgba(251,248,243,.98);
+  --superficie: #ffffff;
+  --texto: #1f1b16;
+  --suave: #5c544a;
+  --acento: #1e3a8a;
+  --sobre-acento: #ffffff;
+  --acento-texto: #1e3a8a;
+  --enlace: #1e3a8a;
+  --foco: #c2410c;
+  --borde: #e6dfd3;
+  --borde-campo: #857a6b;
+  --fondo-sec: #ffffff;
+  --texto-sec: #1e3a8a;
+  --borde-sec: #1e3a8a;
+  --alerta-fondo: #fdecc8;
+  --alerta-texto: #6b3a00;
+  --ok-fondo: #dcefdc;
+  --ok-texto: #1d5a1d;
+  --pista: #e6dfd3;
+  --icono-fondo: #eef1fb;
+}
+@media (prefers-color-scheme: dark) {
+:root:not([data-theme="claro"]) {
+  --fondo: #1b1814;
+  --fondo-barra: rgba(27,24,20,.98);
+  --superficie: #25211b;
+  --texto: #f1ebe2;
+  --suave: #bdb2a3;
+  --acento: #a9c0ff;
+  --sobre-acento: #10131c;
+  --acento-texto: #a9c0ff;
+  --enlace: #a9c0ff;
+  --foco: #fdba74;
+  --borde: #3a342b;
+  --borde-campo: #8a8072;
+  --fondo-sec: #25211b;
+  --texto-sec: #a9c0ff;
+  --borde-sec: #a9c0ff;
+  --alerta-fondo: #4a3510;
+  --alerta-texto: #fcd9a0;
+  --ok-fondo: #1f3a1f;
+  --ok-texto: #b7e4b7;
+  --pista: #3a342b;
+  --icono-fondo: #2a2f45;
+}
+}
+:root[data-theme="oscuro"] {
+  --fondo: #1b1814;
+  --fondo-barra: rgba(27,24,20,.98);
+  --superficie: #25211b;
+  --texto: #f1ebe2;
+  --suave: #bdb2a3;
+  --acento: #a9c0ff;
+  --sobre-acento: #10131c;
+  --acento-texto: #a9c0ff;
+  --enlace: #a9c0ff;
+  --foco: #fdba74;
+  --borde: #3a342b;
+  --borde-campo: #8a8072;
+  --fondo-sec: #25211b;
+  --texto-sec: #a9c0ff;
+  --borde-sec: #a9c0ff;
+  --alerta-fondo: #4a3510;
+  --alerta-texto: #fcd9a0;
+  --ok-fondo: #1f3a1f;
+  --ok-texto: #b7e4b7;
+  --pista: #3a342b;
+  --icono-fondo: #2a2f45;
+}
+
+.titulo-grande { font-family: var(--serif); font-size: 2.25rem; font-weight: 600; letter-spacing: -.01em; }
+.seccion { font-family: var(--serif); font-size: 1.25rem; font-weight: 600; }
+.marca { font-family: var(--serif); font-size: 1.125rem; }
+.aviso { background: var(--alerta-fondo); color: var(--alerta-texto); border-left: 4px solid currentColor; border-radius: 4px 12px 12px 4px; }
+.aviso .boton-secundario { background: transparent; color: var(--alerta-texto); border-color: currentColor; }
+.buscar, .herramientas, .proyectos, .archivo, .opciones, .resultado, .grupo { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; }
+.herramientas > li + li, .proyectos > li + li, .opcion + .opcion { border-top: 1px solid var(--borde); }
+.icono { background: var(--icono-fondo); color: var(--acento-texto); }
+.opciones { padding: 0; } .opciones legend { padding: 0; }
+.proyectos-grandes .proy { gap: 10px; padding: 16px; }
+.pestanas a[aria-current="page"] svg { stroke-width: 2.4; }

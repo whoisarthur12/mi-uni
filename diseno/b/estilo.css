@@ -1,0 +1,102 @@
+/* Dirección B: tokens (claro / oscuro) y estilo propio. */
+:root {
+  --letra: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+  --radio-boton: 14px;
+  --fondo: #f2f2f7;
+  --fondo-barra: rgba(242,242,247,.98);
+  --superficie: #ffffff;
+  --texto: #111114;
+  --suave: #5c5c66;
+  --acento: #4338ca;
+  --sobre-acento: #ffffff;
+  --acento-texto: #4338ca;
+  --enlace: #4338ca;
+  --foco: #4338ca;
+  --borde: #dcdce3;
+  --borde-campo: #7f7f8a;
+  --fondo-sec: #e8e7fb;
+  --texto-sec: #3730a3;
+  --borde-sec: transparent;
+  --alerta-fondo: #fff1d6;
+  --alerta-texto: #7a4100;
+  --ok-fondo: #d9f3e3;
+  --ok-texto: #11602f;
+  --pista: #dcdce3;
+  --c1: #4338ca;
+  --c2: #0f766e;
+  --c3: #b45309;
+  --c4: #be185d;
+}
+@media (prefers-color-scheme: dark) {
+:root:not([data-theme="claro"]) {
+  --fondo: #000000;
+  --fondo-barra: rgba(18,18,20,.98);
+  --superficie: #1c1c1f;
+  --texto: #f5f5f7;
+  --suave: #a6a6b0;
+  --acento: #5b52e6;
+  --sobre-acento: #ffffff;
+  --acento-texto: #b4b0ff;
+  --enlace: #b4b0ff;
+  --foco: #b4b0ff;
+  --borde: #2e2e33;
+  --borde-campo: #5a5a63;
+  --fondo-sec: #2a2850;
+  --texto-sec: #d4d2ff;
+  --borde-sec: transparent;
+  --alerta-fondo: #3d2a08;
+  --alerta-texto: #ffd18a;
+  --ok-fondo: #0f3320;
+  --ok-texto: #9be3b6;
+  --pista: #2e2e33;
+  --c1: #5b52e6;
+  --c2: #0d9488;
+  --c3: #c2620a;
+  --c4: #db2777;
+}
+}
+:root[data-theme="oscuro"] {
+  --fondo: #000000;
+  --fondo-barra: rgba(18,18,20,.98);
+  --superficie: #1c1c1f;
+  --texto: #f5f5f7;
+  --suave: #a6a6b0;
+  --acento: #5b52e6;
+  --sobre-acento: #ffffff;
+  --acento-texto: #b4b0ff;
+  --enlace: #b4b0ff;
+  --foco: #b4b0ff;
+  --borde: #2e2e33;
+  --borde-campo: #5a5a63;
+  --fondo-sec: #2a2850;
+  --texto-sec: #d4d2ff;
+  --borde-sec: transparent;
+  --alerta-fondo: #3d2a08;
+  --alerta-texto: #ffd18a;
+  --ok-fondo: #0f3320;
+  --ok-texto: #9be3b6;
+  --pista: #2e2e33;
+  --c1: #5b52e6;
+  --c2: #0d9488;
+  --c3: #c2620a;
+  --c4: #db2777;
+}
+
+.titulo-grande { font-size: 2.125rem; font-weight: 800; letter-spacing: -.02em; }
+.seccion { font-size: 1.25rem; font-weight: 700; }
+.aviso { background: var(--alerta-fondo); color: var(--alerta-texto); border-radius: 18px; }
+.aviso .boton-secundario { background: var(--alerta-texto); color: var(--alerta-fondo); }
+.buscar { background: var(--superficie); border-radius: 14px; }
+.herramientas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.herr { flex-direction: column; align-items: flex-start; height: 100%; min-height: 148px; padding: 16px; background: var(--superficie); border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.herr .flecha { display: none; }
+.icono { width: 48px; height: 48px; border-radius: 14px; color: #fff; background: var(--c1); }
+.herramientas li:nth-child(2) .icono { background: var(--c2); } .herramientas li:nth-child(3) .icono { background: var(--c3); } .herramientas li:nth-child(4) .icono { background: var(--c4); }
+.herr-activa { outline: 2px solid var(--acento); outline-offset: -2px; }
+.herr-activa:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+.proyectos { display: grid; gap: 10px; }
+.proy, .archivo, .opcion, .resultado, .grupo { background: var(--superficie); border-radius: 16px; }
+.opciones { display: grid; gap: 10px; }
+.opcion:has(input:checked) { outline: 2px solid var(--acento); outline-offset: -2px; }
+.resultado-cifra strong { color: var(--acento-texto); font-size: 2rem; }
+.pestanas a[aria-current="page"] svg { fill: currentColor; fill-opacity: .18; }
