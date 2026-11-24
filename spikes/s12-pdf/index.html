@@ -15,11 +15,24 @@
 <div class="row"><label for="files">PDFs</label> <input id="files" type="file" accept="application/pdf" multiple></div>
 <div class="row">
   <button id="merge" type="button">Unir los elegidos</button>
-  <button id="thumbsBtn" type="button">Miniaturas del primero</button>
+  <button id="save" type="button">Guardar el resultado</button>
+</div>
+<p id="msg" class="muted" role="status"></p>
+<div class="row">
+  <button id="lazyBtn" type="button">Miniaturas perezosas del primero</button>
+  <button id="lazyStats" type="button">Anotar tras desplazar</button>
+  <button id="thumbsBtn" type="button">Todas las miniaturas (referencia)</button>
   <button id="renderBtn" type="button">Render grande (página 1, ×2)</button>
 </div>
-<div class="row"><button id="fx" type="button" hidden>Fixtures</button><button id="copy" type="button">Copiar resultados</button></div>
 <div id="thumbs" class="thumbs"></div>
+<div class="row"><button id="copy" type="button">Copiar resultados</button> <span id="copied" hidden>Copiado.</span></div>
 <pre id="out"></pre>
+<dialog id="ask">
+  <form method="dialog">
+    <p id="askText"></p>
+    <p><input id="askPw" type="password" autocomplete="off" aria-label="Contraseña" hidden></p>
+    <button value="no">No</button> <button id="askYes" value="si">Sí</button>
+  </form>
+</dialog>
 </body>
 </html>

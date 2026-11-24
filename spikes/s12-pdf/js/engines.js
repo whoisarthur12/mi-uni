@@ -1,12 +1,12 @@
-// Carga de pdf-lib (o su fork @cantoo/pdf-lib) y pdf.js para el spike S12.
+// Carga de @cantoo/pdf-lib y pdf.js para el spike S12 (versiones aprobadas en ADR-010, en js/vendor/).
 // pdf.js corre su worker según ADR-004: worker blob: con lockdown.js primero y sin red propia
 // (useWorkerFetch:false → la página trae wasm y fuentes estándar y se los pasa).
-const V = new URL('../vendor/', import.meta.url);
+const V = new URL('../../../js/vendor/', import.meta.url);
+const FONTS = new URL('../vendor/pdfjs-6.5.438-standard_fonts/', import.meta.url); // solo evaluación (no aprobadas)
 const LOCKDOWN = new URL('../../s10-plataforma/csp/lockdown.js', import.meta.url).href;
 
-export async function loadPdfLib(variant = 'pdf-lib') {
-  const path = variant === 'cantoo' ? 'cantoo-pdf-lib-2.11.1/pdf-lib.esm.min.js' : 'pdf-lib-1.17.1/pdf-lib.esm.min.js';
-  return import(new URL(path, V).href);
+export async function loadPdfLib() {
+  return import(new URL('cantoo-pdf-lib-2.11.1/pdf-lib.esm.min.js', V).href);
 }
 
 let pdfjs = null, port = null;
@@ -31,7 +31,7 @@ self.onmessage=null;for(const d of q)self.dispatchEvent(new MessageEvent('messag
 export function openPdf(data, extra = {}) {
   return pdfjs.getDocument({
     data, isEvalSupported: false, useWorkerFetch: false,
-    standardFontDataUrl: new URL('pdfjs-6.5.438/standard_fonts/', V).href,
+    standardFontDataUrl: FONTS.href,
     wasmUrl: new URL('pdfjs-6.5.438/wasm/', V).href,
     ...extra,
   });
