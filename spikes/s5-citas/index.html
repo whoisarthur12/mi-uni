@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self' https://api.crossref.org https://openlibrary.org https://www.googleapis.com; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S5 — citas CSL</title>
+<link rel="stylesheet" href="../s10-plataforma/app/style.css">
+<script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<h1>Citas (APA 7 en español)</h1>
+<p class="muted">Formatea referencias con citeproc-js en el dispositivo. <strong>Aviso de red:</strong> los botones DOI e ISBN envían <em>solo</em> ese identificador a CrossRef, Open Library o Google Books. Nada más sale del dispositivo.</p>
+<div class="row"><button id="bench" type="button">Medir 100 referencias</button></div>
+<div class="row">
+  <label for="id">DOI o ISBN</label> <input id="id" value="10.1038/nature12373" autocomplete="off">
+  <button id="doi" type="button">Buscar DOI</button> <button id="isbn" type="button">Buscar ISBN</button>
+</div>
+<div id="bib"></div>
+<div class="row"><button id="copy" type="button">Copiar resultados</button></div>
+<pre id="out"></pre>
+</body>
+</html>

@@ -37,3 +37,21 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S10 canvas | JPEG 4000×3000 q0,85 | página / worker | 93–96 / 69–103 / 249–402 ms | — | — | los 3 | |
 | S10 PWA | instalabilidad bajo `/mi-uni/` | CDP | ✅ 0 errores | — | — | Chromium 158 | |
 | S10 shell | peso del shell del spike | gzip -9 | 27,8 KB / 11,9 KB gzip | — | — | — | Presupuesto: ≤ 150 KB |
+| S11 IndexedDB | blobs aleatorios 5 / 30 / 80 MB | guardar (con CRC) | ✅ releídos idénticos; 80 MB: 448 / 1.377 / 565 ms | leer 80 MB: 57 / 306 / 352 ms | +374 / +410 / +667 MB | Chromium 158 · Firefox 155 · WebKit 26.6 (perfil en disco) | |
+| S11 ZIP | proyecto 200 MB (5 archivos) [SINT] | exportar STORE | ✅ `zipfile.testzip()` OK | 0,84 / 0,98 / 0,50 s | +10 / +4 / +0 MB | los 3 | CRC precalculado: sin copiar datos |
+| S11 ZIP | mismo ZIP | importar (CRC antes y después) | ✅ idéntico; también en perfil limpio | 2,5 / 7,8 / 3,1 s | +279 / +372 / +640 MB | los 3 | |
+| S11 ZIP | ZIP con un byte alterado | importar | ✅ rechazado, nada escrito | 0,7 / 2,6 / 0,8 s | — | los 3 | |
+| S11 ZIP | importación cortada (navegador cerrado) | limpieza al arrancar | ✅ 0 blobs huérfanos | — | — | los 3 | |
+| S11 IndexedDB | `File.slice()` guardado tal cual | — | ❌ se relee el File entero | — | — | WebKit 26.6 | Chromium/Firefox OK; copiar con arrayBuffer() lo corrige |
+| S11 cuota | llenar de 50 en 50 MB | tope 1.500 MB | sin error a 1.500 MB; `estimate()` usage 0 / quota 1.000 | 22 s | — | WebKit 26.6 | estimate() inútil en WebKit |
+| S11 persist | `navigator.storage.persist()` | sin gesto | false / pendiente / false | — | — | los 3 | |
+| S11 trozos | importar proyecto 200 MB [SINT] en perfil limpio | archivo entero / 16 MB / 8 MB | ✅ idéntico en todos | 8 MB: 3,0 / 9,6 / 3,5 s | +349/+195/+173 · +432/+215/+157 · +647/+258/+133 MB | Chromium · Firefox · WebKit | 8 MB por defecto (ADR-006) |
+| S11 respaldo | política de aviso | 7 días | ✅ 7 pruebas en Node | — | — | Node 22 | |
+| S5 CSL | 10 tipos de fuente (items.json) [SINT] | apa-es + es-ES | ✅ coincide con lo esperado (15 pruebas) | — | — | Node 22 | Validar con el reglamento de la universidad |
+| S5 CSL | 100 referencias APA | crear motor / bibliografía / 50 citas | ✅ | 745/119/13 · 1.187/176/33 · 923/199/31 ms | — | Chromium 158 · Firefox 155 · WebKit 26.6 | En worker: bloqueo máx. de página 17 / 18 / 26 ms |
+| S5 red | DOI CrossRef (2) + inexistente | CORS desde el navegador | ✅ 200 / 404 | 0,1–0,6 s | — | los 3 | Firefox con ignoreHTTPSErrors (CA del proxy del contenedor) |
+| S5 red | ISBN Open Library (3) | CORS | ✅ | 0,14–4,3 s | — | los 3 | Apellidos compuestos mal separados |
+| S5 red | ISBN Google Books | sin clave | ❌ 429 cuota diaria | — | — | curl | Solo respaldo |
+| S5 red | cabeceras enviadas | — | Origin sí; sin Referer ni cookies | — | — | los 3 | |
+| S5 CSP | fetch a example.com | connect-src con 3 hosts | ✅ bloqueado | — | — | los 3 | |
+| S5 XSS | título con img onerror / script / javascript: | sanitizador | ✅ eliminado | — | — | los 3 | |

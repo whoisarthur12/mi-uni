@@ -146,7 +146,7 @@ El dueño tiene un catálogo ampliado de otra conversación (se conoce aquí sol
 | Estructura | **PWA única** con *shell* + módulos cargados bajo demanda (`import()` dinámico) | Una instalación, módulos pesados solo si se usan |
 | Navegación | Router por *hash* (`#/ruta`) | GitHub Pages no reescribe rutas; el *history API* daría 404 al recargar |
 | Almacenamiento | **IndexedDB** (datos) + **Cache API** (assets pesados) + `localStorage` solo para ajustes triviales | Capacidad y robustez |
-| Respaldo | Exportar/importar **todo** como JSON (o ZIP) | Sin backend no hay copia en la nube |
+| Respaldo | Exportar/importar **todo** como JSON (o ZIP). **Requisito de producto (ADR-006):** la app muestra la fecha del último respaldo de cada proyecto y avisa cuando hay cambios sin exportar desde hace ≥ 7 días (configurable) | Sin backend no hay copia en la nube; el navegador puede borrar los datos |
 | Proyectos | **Sistema local de proyectos y entidades** con IDs estables (ver §8.6); exportable como ZIP | Convierte herramientas sueltas en flujos completos |
 | Comunicación entre módulos | **Bus de eventos local** (`EventTarget`) + contratos de datos en `ctx.projects` (ver §8.7) | Los módulos no se importan entre sí |
 | Cuentas y sincronización | **Ninguna** (por ahora) | Sin backend; sincronizar sería una fase futura y opcional |
@@ -198,13 +198,17 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 8. **Mermaid:** exportar a PNG puede fallar por etiquetas con `foreignObject` (contaminan el canvas); verificar la configuración que permite exportar bien.
 9. **Ecuaciones a Word:** pegar MathML en Word y su comportamiento varía; convertir LaTeX a OMML (formato nativo de Word) no es trivial y puede tener restricciones de licencia en herramientas de Microsoft. Plan B: exportar la ecuación como imagen (PNG/SVG).
 10. **CSL:** peso de los estilos y locales, comportamiento del procesador con las **variantes en español** (`es-ES`, `es-MX`, etc.) y licencia de los estilos.
+   - **✅ Resuelto (S5, ADR-008):** citeproc-js 2.4.63 (191 KB gzip, AGPL-3.0-or-later) + APA 13 KB + locale ~5 KB gzip; estilos CC BY-SA 3.0. Ningún locale oficial da APA en español (`es-ES`: guion en páginas; `es-MX`: "s/f", "6a ed."; ambos "&") → estilo derivado `apa-es.csl`, a validar con el reglamento de la universidad. Motor en worker (crear: 0,7–1,3 s).
 11. **CORS de APIs de metadatos** (CrossRef por DOI, Open Library/Google Books por ISBN): confirmar que responden desde un navegador, sus límites y cuáles necesitan clave. **Obtener metadatos desde una URL cualquiera no es viable sin servidor** por CORS: ofrecer formulario manual.
+   - **✅ Resuelto (S5, ADR-007):** CrossRef y Open Library responden por CORS (`*`) desde el navegador en los 3 motores; Google Books sin clave dio 429 (cuota agotada) → solo respaldo. Única excepción del net-guard: 3 hosts, a petición del usuario, solo DOI/ISBN, sin Referer ni cookies.
 12. **Fórmulas de legibilidad en español** (Fernández-Huerta, Szigriszt-Pazos/INFLESZ): verificar coeficientes contra la fuente original antes de publicarlas, y la calidad del contador de sílabas.
 13. **`File System Access API`** solo existe en navegadores Chromium; hay que garantizar la alternativa (descarga clásica).
 14. **Wake Lock, `OffscreenCanvas`, módulos en Workers** y otras APIs: confirmar versiones mínimas de Safari iOS.
    - **✅ Resuelto (S10, MDN BCD 8.1.10):** workers módulo iOS 15; `OffscreenCanvas` iOS 16.4; `'wasm-unsafe-eval'` iOS 16; Wake Lock iOS 18.4. Propuesta: mínimo **Safari iOS 16.4**; Wake Lock opcional. Tabla en `spikes/s10-plataforma/README.md`.
 15. **Cuota y persistencia de IndexedDB:** límites reales por navegador (sobre todo Safari/iOS), si `navigator.storage.persist()` se concede, y si el navegador puede **borrar datos** de sitios que no se usan durante un tiempo (en Safari hay políticas de este tipo; comprobar si las apps instaladas en pantalla de inicio están exentas). Condiciona el diseño del respaldo.
+   - **Fase 0 (S11, parcial):** `persist()` no se concede sin gesto/instalación (Chromium, WebKit) y en Firefox pide permiso; `estimate()` en WebKit no cuenta los blobs. Cuota y borrado de Safari iOS **sin medir** (página `spikes/s11-almacenamiento/` lista). Estrategia en ADR-006: recordatorio de respaldo + ZIP.
 16. **Proyectos con archivos grandes:** comportamiento al guardar *blobs* de decenas de MB en IndexedDB, rendimiento al exportar/importar un proyecto a ZIP de cientos de MB en celulares y si hace falta procesar por trozos.
+   - **Fase 0 (S11):** 5–80 MB en IndexedDB y proyecto de 200 MB a ZIP e importado idéntico en los 3 motores (exportar < 1 s sin coste de memoria; importar 2,5–7,8 s, +280–640 MB de pico en escritorio). Bug de WebKit con `File.slice()` → copiar antes de guardar. iPhone pendiente (ADR-006).
 
 ---
 
@@ -415,6 +419,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 - **"Guardar en proyecto"** desde cualquier herramienta al terminar, y **"Usar un recurso del proyecto"** al empezar (p. ej., el compresor ofrece los PDF del proyecto).
 - **Búsqueda dentro del proyecto** y desde el buscador global.
 - **Exportar/importar** un proyecto como ZIP (respaldo y traslado entre dispositivos).
+- **Fecha del último respaldo** visible en cada proyecto y **aviso** cuando hace tiempo que no se exporta (ADR-006). Cada archivo guardado se **relee y verifica** (tamaño y CRC) antes de confirmarse.
 - **Espacio usado** por proyecto y avisos de cuota.
 
 **Qué NO hace.** No sincroniza con la nube, no colabora en tiempo real y no es obligatorio.

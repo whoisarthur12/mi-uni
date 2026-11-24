@@ -136,7 +136,7 @@ Construir la base sobre la que se apoyan todos los módulos.
 2. **Shell:** router por hash, registro de módulos con `import()` dinámico, pantalla de inicio (categorías, buscador, recientes), navegación y pantalla de **Ajustes** (tema, papel, estilo de cita por defecto, uso de almacenamiento, red).
 3. **Núcleo:** `storage.js` (envoltorio de IndexedDB con versionado/migraciones), `files.js` (abrir con selector/arrastrar; guardar con `File System Access API` si existe y **descarga clásica** como alternativa; `navigator.share` cuando esté disponible), `workers.js` (utilidades de Worker con progreso y cancelación), `net-guard.js` (envoltura de `fetch` con lista blanca y registro), `backup.js` (exportar/importar todo en JSON/ZIP), `settings.js`.
 4. **Perfil compartido** (módulo 0): perfil + cursos, API `ctx.profile`, exportación/importación, cifrado opcional.
-5. **Proyectos** (`core/projects.js`): modelo de entidades y contratos de `CONTEXT.md` §8.6; almacenes `proyectos`, `recursos` y `blobs` en IndexedDB con esquema versionado y migraciones; API `ctx.projects` (crear, obtener, listar, guardar/leer/quitar recurso, suscribirse); plantillas de proyecto; papelera local; **exportar/importar proyecto como ZIP**; indicador de espacio y avisos de cuota; pantalla "Mis proyectos" con panel de proyecto.
+5. **Proyectos** (`core/projects.js`): modelo de entidades y contratos de `CONTEXT.md` §8.6; almacenes `proyectos`, `recursos` y `blobs` en IndexedDB con esquema versionado y migraciones; API `ctx.projects` (crear, obtener, listar, guardar/leer/quitar recurso, suscribirse); plantillas de proyecto; papelera local; **exportar/importar proyecto como ZIP**; indicador de espacio y avisos de cuota; pantalla "Mis proyectos" con panel de proyecto. **Requisitos de ADR-006:** archivos en trozos de 8 MB; **verificar después de escribir** cada trozo (releer y comparar tamaño y CRC) antes de confirmar el recurso; importación trozo por trozo con marca `importando` y limpieza al arrancar; **fecha del último respaldo** por proyecto y **aviso** de respaldo pendiente (≥ 7 días con cambios sin exportar).
 6. **Eventos** (`core/events.js`): bus sobre `EventTarget`, catálogo de `CONTEXT.md` §8.7, validación de que el payload solo contenga IDs y metadatos, utilidad para suscribirse y **desuscribirse automáticamente al desmontar** un módulo.
 7. **Diagnóstico local** (`core/diag.js`): registro de errores y duraciones según `CONTEXT.md` §8.8, pantalla "Diagnóstico", botón "Copiar reporte"; opt-in y **sin envío automático**.
 8. **Buscador** (`core/search.js`): índice en memoria de herramientas (nombre, descripción, palabras clave, sinónimos, categoría) y de proyectos/recursos recientes; búsqueda tolerante a tildes y mayúsculas.
@@ -148,6 +148,7 @@ Construir la base sobre la que se apoyan todos los módulos.
 - La app se instala como PWA y **abre sin internet** (shell + perfil).
 - Un módulo "de ejemplo" se carga bajo demanda y se descarga para offline con progreso.
 - Perfil editable, exportable e importable; los cambios se propagan a un módulo abierto.
+- Cada proyecto muestra la **fecha de su último respaldo** y la app **avisa** cuando hay cambios sin exportar desde hace ≥ 7 días; todo archivo guardado se **relee y verifica** antes de confirmarse.
 - Un módulo "de ejemplo" **guarda un resultado en un proyecto**, otro módulo "de ejemplo" lo **lee** y el evento correspondiente se publica; exportar el proyecto a ZIP e importarlo en otro navegador lo reproduce idéntico.
 - El buscador encuentra herramientas por nombre, sinónimo y categoría, y proyectos por nombre.
 - La pantalla Diagnóstico muestra errores y tiempos locales y permite copiar el reporte; no genera ninguna petición de red.
@@ -280,7 +281,7 @@ Se construye **después del hito MVP**. El Escáner va primero: es el complement
 - **Flujos conectados** definitivos entre módulos (Escáner→Compresor, Office→Compresor, Portada→Unir, Bibliografía→copiar).
 - **Auditoría del modelo de proyectos y eventos:** comprobar que ningún módulo se salta el contrato (acceso a almacenes ajenos, eventos con contenido, automatismos silenciosos) y que exportar/importar proyectos sigue siendo fiable con el catálogo completo.
 - Pantalla de **ayuda corta** por módulo, página "Privacidad" y enlace al **código fuente** (obligación AGPL), página de **créditos y licencias** generada desde `VERSIONS.md`.
-- Recordatorio periódico de **exportar respaldo**.
+- Recordatorio periódico de **exportar respaldo** (ya obligatorio desde la Fase 1, ADR-006): revisar que el aviso funciona en todos los flujos.
 - Pruebas finales cruzadas (ver §8) y checklist de lanzamiento.
 
 *Aceptación:* checklist de §8 completo en Chrome Android, Safari iPhone y escritorio; auditoría de red sin peticiones externas no autorizadas; instalación y uso offline verificados.

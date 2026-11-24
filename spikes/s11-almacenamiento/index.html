@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S11 — proyectos y almacenamiento</title>
+<link rel="stylesheet" href="../s10-plataforma/app/style.css">
+<script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<h1>Proyectos y almacenamiento</h1>
+<p class="muted">Guarda archivos de prueba (bytes aleatorios) en IndexedDB del navegador, mide tiempos, exporta un proyecto de 200 MB a ZIP y lo vuelve a importar. Nada sale del dispositivo. Usa hasta ~600 MB de espacio; "Borrar datos" lo libera.</p>
+<p id="saved" role="status"></p>
+<pre id="backup" aria-live="polite"></pre>
+<div class="row"><label for="chunk">Trozo</label><select id="chunk"><option value="8" selected>8 MB</option><option value="16">16 MB</option><option value="0">archivo entero</option></select></div>
+<div class="row">
+  <button id="bench" type="button">Medir 5 / 30 / 80 MB</button>
+  <button id="proj" type="button">Crear proyecto de 200 MB y exportar ZIP</button>
+  <label>Importar ZIP <input id="imp" type="file" accept=".zip,application/zip"></label>
+</div>
+<div class="row">
+  <button id="persist" type="button">Pedir almacenamiento persistente</button>
+  <button id="copy" type="button">Copiar resultados</button>
+  <button id="wipe" type="button">Borrar datos</button>
+</div>
+<pre id="out"></pre>
+</body>
+</html>
