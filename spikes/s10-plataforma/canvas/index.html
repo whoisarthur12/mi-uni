@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src blob:; connect-src 'self'; style-src 'self'; img-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S10 — límites de canvas</title>
+<link rel="stylesheet" href="../app/style.css">
+<script src="./probe.js"></script>
+<script type="module" src="./main.js"></script>
+</head>
+<body>
+<h1>Límites de canvas</h1>
+<p class="muted">Mide el tamaño máximo de canvas en la página y en un worker (OffscreenCanvas), cuántos canvas de 64 MB caben vivos a la vez y el tiempo de codificar una foto de 12 MP a JPEG. Puede tardar y, en un celular, cerrar la pestaña: si pasa, baja el tope y anótalo.</p>
+<div class="row">
+  <label for="cap">Tope de canvas de 64 MB vivos</label>
+  <select id="cap"><option value="8">8 (512 MB)</option><option value="16" selected>16 (1 GB)</option><option value="24">24 (1,5 GB)</option></select>
+  <button id="run" type="button">Medir</button>
+  <button id="copy" type="button">Copiar resultados</button>
+</div>
+<p id="status" aria-live="polite"></p>
+<pre id="out"></pre>
+</body>
+</html>
