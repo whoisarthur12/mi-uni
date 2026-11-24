@@ -133,7 +133,7 @@ Página de 3000×4000 a 12 MP: 0,46 / 0,69 / 0,97 s; pico +145 / +237 / +374 MB;
 node --test spikes/s12-pdf/test/pdf-tools.test.mjs
 ```
 ```bash
-node --test tests/policy/
+node --test tests/policy/*.test.mjs
 ```
 ```bash
 python3 -I spikes/s12-pdf/gen_fixtures.py /tmp/s12fx
