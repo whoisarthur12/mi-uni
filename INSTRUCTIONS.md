@@ -116,6 +116,8 @@ Objetivo: **resolver las dudas de `CONTEXT.md` §7 antes de construir nada grand
 | S10 Plataforma | Router por hash, service worker con caché versionado, límites de canvas/memoria en iOS, CSP por `<meta>` con WASM | Qué directivas CSP necesita WASM (`'wasm-unsafe-eval'`), tope de canvas, comportamiento de la instalación PWA |
 | S11 Proyectos y almacenamiento | Guardar *blobs* de 5, 30 y 80 MB en IndexedDB; exportar/importar un proyecto de ~200 MB a ZIP; `navigator.storage.persist()`; comportamiento en Safari iOS | Cuota real, tiempos, necesidad de procesar por trozos, si el navegador borra datos tras un tiempo sin uso, estrategia de respaldo |
 
+> **ADR-011 (24-nov-2026):** S1, S5, S10, S11 y S12 están hechos ([`docs/fase0-resumen.md`](docs/fase0-resumen.md)). S4, S9, S7, S8, S6, S2 y S3 quedan como **riesgo abierto: se miden antes de su fase**. **Ninguna fase empieza sin sus spikes hechos.**
+
 **Prioridad dentro de la Fase 0:** primero los spikes que condicionan el **hito MVP** (S1 Ghostscript, S5 citas/CSL, S10 plataforma y S11 proyectos y almacenamiento). Los demás (S2 escáner, S3 Office→PDF, S4 ortografía, S6–S9 visuales) pueden hacerse justo antes de la fase que los necesita, pero **antes de construir ese módulo**.
 
 **Entregables de la Fase 0:**
@@ -130,6 +132,8 @@ Objetivo: **resolver las dudas de `CONTEXT.md` §7 antes de construir nada grand
 
 ### FASE 1 — Shell, núcleo, perfil y proyectos  ·  esfuerzo L
 Construir la base sobre la que se apoyan todos los módulos.
+
+> **Fase 1 mínima (ADR-011):** primero el shell y la navegación, el perfil y el almacenamiento de S11 (verificación al escribir, importación por trozos, ZIP y aviso de respaldo desde el inicio), con el **Compresor de PDF (2.2) como primer módulo utilizable**. El buscador, el diagnóstico y el catálogo completo de eventos van después del Compresor y antes del hito MVP. **Antes de la interfaz:** 2 o 3 direcciones de diseño en `/mi-uni/diseno/` para que el dueño elija.
 
 **Tareas**
 1. `index.html`, `manifest.webmanifest` (rutas relativas, íconos 192/512/maskable, `display: standalone`) y estructura del repositorio.

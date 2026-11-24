@@ -1,6 +1,6 @@
 # ADR-005 — Service worker, cachés versionadas y descarga offline por módulo
 
-- **Estado:** propuesta (medida en Chromium 158, Firefox 155 y WebKit 26.6 sobre Linux; **iPhone y Android reales pendientes**)
+- **Estado:** **aceptada** por el dueño (24-nov-2026). Medida en Chromium 158, Firefox 155 y WebKit 26.6 sobre Linux. **iPhone (24-nov-2026):** la app carga desde Pages, la descarga del módulo pesado se verifica (14,9 MB) y funciona sin conexión. Android real pendiente.
 - **Contexto:** la app vive en GitHub Pages bajo `/<repo>/`, sin cabeceras propias y con `Cache-Control: max-age=600` en todo. Debe abrir sin internet (shell + módulos descargados), actualizarse sin dejar a nadie atrapado en una versión vieja y descargar módulos pesados (Ghostscript: 15,5 MB) solo cuando el usuario lo pida (INSTRUCTIONS §6, ADR-002).
 
 ## Método

@@ -1,6 +1,6 @@
 # ADR-004 — Aislar de la red a los Web Workers (CSP en GitHub Pages)
 
-- **Estado:** propuesta (medida en Chromium 158, Firefox 155 y WebKit 26.6 sobre Linux; **iOS Safari real pendiente**)
+- **Estado:** **aceptada** por el dueño (24-nov-2026). Medida en Chromium 158, Firefox 155 y WebKit 26.6 sobre Linux; **iOS Safari real pendiente**.
 - **Contexto:** S1 descubrió que la CSP `<meta>` del documento **no se aplica a un worker cargado por URL**, y GitHub Pages no permite cabeceras. Los workers procesan los archivos del usuario: si una librería vendorizada fuera vulnerable o maliciosa, podría exfiltrarlos. El dueño pidió evaluar (a) worker `blob:`, (b) CSP por cabecera desde el service worker y (c) bloqueo de APIs de red dentro del worker, en 3 navegadores y con medición real.
 
 ## Método

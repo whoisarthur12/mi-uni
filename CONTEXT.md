@@ -790,7 +790,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 3. **Formatos de su universidad:** reglamento de portadas, márgenes, fuentes, estilo de cita exigido. Es la materia prima para plantillas fieles.
 4. **Dónde alojar los assets muy grandes** (LibreOffice WASM), si se decide incluirlo: troceado en GitHub Pages u otro alojamiento gratuito con CORS.
 5. **Escala de notas / calendario académico:** no aplica a esta lista, pero el armador de horarios necesita las **fechas de inicio y fin** del semestre para el `.ics`.
-6. **Dispositivos de prueba** del dueño (modelo de celular y navegador) para fijar presupuestos de rendimiento.
+6. **Dispositivos de prueba** del dueño (modelo de celular y navegador) para fijar presupuestos de rendimiento. *(24-nov-2026: iPhone con Safari; falta el modelo. Pendientes de dispositivo en `docs/fase0-resumen.md`.)*
 
 ---
 
