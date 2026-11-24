@@ -3,14 +3,15 @@ const assert = require('node:assert/strict');
 const C = require('../sw-config.js');
 
 test('nombres de caché', () => {
-  assert.equal(C.shellCache(), 'shell-v1');
+  assert.equal(C.shellCache(), `shell-v${C.SHELL_VERSION}`);
   assert.equal(C.modCache('ligero'), 'mod-ligero-v1');
   assert.equal(C.assetsCache('pesado'), 'assets-pesado-v1');
   assert.deepEqual(C.parseName('assets-pesado-v12'), { kind: 'assets', id: 'pesado', version: 12 });
   assert.equal(C.parseName('otra-cosa'), null);
 });
 test('limpieza: shell y mod viejos se borran; cachés ajenas no', () => {
-  const del = C.planCleanup(['shell-v0', 'shell-v1', 'mod-ligero-v0', 'mod-ligero-v1', 'ajena', 'mod-borrado-v3'], []);
+  const cur = `shell-v${C.SHELL_VERSION}`;
+  const del = C.planCleanup(['shell-v0', cur, 'mod-ligero-v0', 'mod-ligero-v1', 'ajena', 'mod-borrado-v3'], []);
   assert.deepEqual(del, ['shell-v0', 'mod-ligero-v0', 'mod-borrado-v3']);
 });
 test('assets viejos solo se borran cuando la versión actual está completa', () => {

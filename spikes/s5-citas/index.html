@@ -11,12 +11,14 @@
 </head>
 <body>
 <h1>Citas (APA 7 en español)</h1>
-<p class="muted">Formatea referencias con citeproc-js en el dispositivo. <strong>Aviso de red:</strong> los botones DOI e ISBN envían <em>solo</em> ese identificador a CrossRef, Open Library o Google Books. Nada más sale del dispositivo.</p>
+<p class="muted">Formatea referencias con citeproc-js en el dispositivo. Estilo: APA 7, adaptación al español <strong>PROVISIONAL</strong> (pendiente del reglamento de la universidad). <strong>Aviso de red:</strong> los botones DOI e ISBN envían <em>solo</em> ese identificador a CrossRef, Open Library o Google Books. Nada más sale del dispositivo. El resultado siempre se revisa antes de guardar.</p>
 <div class="row"><button id="bench" type="button">Medir 100 referencias</button></div>
 <div class="row">
   <label for="id">DOI o ISBN</label> <input id="id" value="10.1038/nature12373" autocomplete="off">
   <button id="doi" type="button">Buscar DOI</button> <button id="isbn" type="button">Buscar ISBN</button>
+  <button id="manual" type="button">Entrada manual</button>
 </div>
+<div id="form"></div>
 <div id="bib"></div>
 <div class="row"><button id="copy" type="button">Copiar resultados</button></div>
 <pre id="out"></pre>

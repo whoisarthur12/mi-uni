@@ -6,4 +6,4 @@ Copiados sin cambios del proyecto Citation Style Language (https://citationstyle
 
 Licencia: Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0), con los créditos de autores en cada archivo.
 
-`apa-es.csl` es una **obra derivada** de `apa.csl` (APA 7th edition), generada por `../../tools/make_apa_es.py`. Se distribuye con la misma licencia, CC BY-SA 3.0. Los cambios se describen en ese script.
+`apa-es.csl` es una **obra derivada** de `apa.csl` (APA 7th edition), generada por `spikes/s5-citas/tools/make_apa_es.py`. Se distribuye con la misma licencia, CC BY-SA 3.0. Los cambios se describen en ese script.

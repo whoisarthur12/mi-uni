@@ -1,7 +1,7 @@
 // Renderiza los ítems de prueba con varios estilos/locales en Node. Uso: node runner/node-render.mjs [estilo] [locale]
 import { readFileSync } from 'node:fs';
 import { createEngine, bibliography, cite } from '../js/cite.js';
-const dir = new URL('../vendor/csl/', import.meta.url);
+const dir = new URL('../../../js/vendor/csl/', import.meta.url);
 const read = (f) => readFileSync(new URL(f, dir), 'utf8');
 const locales = Object.fromEntries(['es-ES', 'es-MX', 'es-CL', 'en-US'].map((l) => [l, read(`locales-${l}.xml`)]));
 const items = JSON.parse(readFileSync(new URL('../test/items.json', import.meta.url), 'utf8'));

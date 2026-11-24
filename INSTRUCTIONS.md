@@ -116,6 +116,8 @@ Objetivo: **resolver las dudas de `CONTEXT.md` §7 antes de construir nada grand
 | S10 Plataforma | Router por hash, service worker con caché versionado, límites de canvas/memoria en iOS, CSP por `<meta>` con WASM | Qué directivas CSP necesita WASM (`'wasm-unsafe-eval'`), tope de canvas, comportamiento de la instalación PWA |
 | S11 Proyectos y almacenamiento | Guardar *blobs* de 5, 30 y 80 MB en IndexedDB; exportar/importar un proyecto de ~200 MB a ZIP; `navigator.storage.persist()`; comportamiento en Safari iOS | Cuota real, tiempos, necesidad de procesar por trozos, si el navegador borra datos tras un tiempo sin uso, estrategia de respaldo |
 
+> **ADR-011 (24-nov-2026):** S1, S5, S10, S11 y S12 están hechos ([`docs/fase0-resumen.md`](docs/fase0-resumen.md)). S4, S9, S7, S8, S6, S2 y S3 quedan como **riesgo abierto: se miden antes de su fase**. **Ninguna fase empieza sin sus spikes hechos.**
+
 **Prioridad dentro de la Fase 0:** primero los spikes que condicionan el **hito MVP** (S1 Ghostscript, S5 citas/CSL, S10 plataforma y S11 proyectos y almacenamiento). Los demás (S2 escáner, S3 Office→PDF, S4 ortografía, S6–S9 visuales) pueden hacerse justo antes de la fase que los necesita, pero **antes de construir ese módulo**.
 
 **Entregables de la Fase 0:**
@@ -130,6 +132,8 @@ Objetivo: **resolver las dudas de `CONTEXT.md` §7 antes de construir nada grand
 
 ### FASE 1 — Shell, núcleo, perfil y proyectos  ·  esfuerzo L
 Construir la base sobre la que se apoyan todos los módulos.
+
+> **Fase 1 mínima (ADR-011):** primero el shell y la navegación, el perfil y el almacenamiento de S11 (verificación al escribir, importación por trozos, ZIP y aviso de respaldo desde el inicio), con el **Compresor de PDF (2.2) como primer módulo utilizable**. El buscador, el diagnóstico y el catálogo completo de eventos van después del Compresor y antes del hito MVP. **Antes de la interfaz:** 2 o 3 direcciones de diseño en `/mi-uni/diseno/` para que el dueño elija.
 
 **Tareas**
 1. `index.html`, `manifest.webmanifest` (rutas relativas, íconos 192/512/maskable, `display: standalone`) y estructura del repositorio.
@@ -161,7 +165,14 @@ Construir la base sobre la que se apoyan todos los módulos.
 Orden: **motor PDF compartido → Compresor → Caja PDF** (el compresor resuelve la necesidad más urgente del dueño). El Escáner pasa a la Fase 4, tras el hito MVP.
 
 **2.1 Motor PDF compartido (`engines/pdf`, `engines/image`, `engines/target-search`)**
-- Envoltorios de `pdf-lib` y `pdf.js` (abrir, miniaturas, render a canvas/`OffscreenCanvas`, ensamblar).
+- Envoltorios de `@cantoo/pdf-lib` 2.11.1 y `pdf.js` 6.5.438 (ADR-010): abrir, miniaturas, render a canvas/`OffscreenCanvas`, ensamblar. **Ningún módulo importa pdf-lib ni pdf.js directamente**: solo `engines/pdf`, para poder cambiar de motor tocando un único archivo (plan de reemplazo del fork en ADR-010).
+- Partir del spike S12:
+  - `pdf-open.js`: apertura con permiso y contraseña; opciones de carga en lista blanca;
+  - `output-guard.js`: guarda de entrada y de salida;
+  - `pdf-memory.js`: tope de memoria 8×, provisional;
+  - las miniaturas perezosas de `main.js`.
+  Las pruebas de `spikes/s12-pdf/test/` pasan a ser pruebas del motor.
+- Prohibido ignorar el cifrado de un PDF: `tests/policy/no-ignore-encryption.test.mjs` debe pasar siempre.
 - Carga de imágenes con **reducción inmediata** (lado largo máximo configurable) y respeto del tope de canvas de iOS.
 - `target-search`: **búsqueda genérica de tamaño objetivo** — recibe una función `probar(nivel) → bytes` y devuelve el mejor nivel que cumpla, con búsqueda binaria, máximo de iteraciones y detección de no monotonía. Lo reutilizan el compresor y el escáner.
 
@@ -180,9 +191,10 @@ Orden: **motor PDF compartido → Compresor → Caja PDF** (el compresor resuelv
 
 **2.3 Caja de herramientas PDF** (spec §9.3)
 - Unir, dividir (rangos / cada N / por tamaño), organizar con miniaturas (arrastrar, borrar, rotar, duplicar, extraer), numerar páginas, marca de agua, firmar (firmas guardadas localmente), rellenar formularios, imágenes↔PDF, metadatos.
-- Mensajes claros para PDFs cifrados y para límites de memoria.
+- PDFs cifrados según CONTEXT §9.3 (confirmación «¿es tuyo o tienes permiso?» para restricciones del propietario; contraseña de apertura pedida, nunca saltada). Mensajes claros para límites de memoria (ADR-003 + ADR-010).
+- **Guarda de entrada y de salida en toda operación que escriba un PDF.** Si falla, no se entrega y se avisa.
 
-*Aceptación:* cada operación genera un PDF que abre bien en un visor externo; reordenar 100 páginas por miniaturas es fluido; formularios simples se rellenan y guardan.
+*Aceptación:* cada operación genera un PDF que pasa la guarda y abre bien en un visor externo; reordenar 100 páginas por miniaturas es fluido; formularios simples se rellenan y guardan.
 
 **Atajos entre módulos de esta fase:** Caja PDF→Compresor, "Dividir en partes" desde el Compresor (mediante el núcleo, sin acoplar módulos). El atajo Escáner→Compresor se añade en la Fase 4.
 
@@ -363,6 +375,16 @@ Cada fila de `tests/results.md` registra: módulo, archivo, parámetros, **resul
 6. Recordar los límites suaves de Pages (tamaño del repositorio y ancho de banda) al decidir qué assets pesados incluir.
 
 ---
+
+### 9.1 Red del entorno de desarrollo (ADR-009)
+El entorno en la nube donde trabaja el agente tiene red limitada. Hosts añadidos con aprobación del dueño (lista exacta; se mantiene igual que en ADR-009):
+- `cdn.playwright.dev` (navegadores de prueba)
+- `api.crossref.org`, `openlibrary.org`, `www.googleapis.com` (S5: medición de DOI/ISBN)
+
+Además están permitidos los registros de paquetes (npm, PyPI, apt) y los servidores MCP. **Cualquier ampliación futura pasa por el dueño:** pedirla explicando para qué, esperar su aprobación, y registrarla aquí y en ADR-009. La red del entorno de desarrollo **no** amplía lo que puede hacer la app.
+
+### 9.2 Única excepción de red de la app (ADR-007)
+La app solo puede salir de su propio origen para consultas de **DOI/ISBN** a `api.crossref.org`, `openlibrary.org` y `www.googleapis.com`, a petición explícita del usuario y enviando solo el identificador. La excepción vive **únicamente** en el net-guard; `node --test tests/policy/net-guard-scope.test.mjs` falla si cualquier otro archivo la usa. Esta prueba se ejecuta antes de cada PR.
 
 ## 10. Ficha técnica y documentación por módulo (`docs/modules/<id>.md`)
 

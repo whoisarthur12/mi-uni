@@ -1,4 +1,4 @@
-"""Genera vendor/csl/apa-es.csl a partir del apa.csl oficial (CC BY-SA 3.0: la derivada también lo es).
+"""Genera js/vendor/csl/apa-es.csl a partir del apa.csl oficial (CC BY-SA 3.0: la derivada también lo es).
 
 Adaptaciones a la edición en español de APA 7 (ver README de S5; validar con el reglamento de la universidad):
   1. "y" en lugar de "&" entre autores (and="symbol" -> and="text"; el término "and" de es-ES es "y").
@@ -11,7 +11,7 @@ Uso: python3 -I tools/make_apa_es.py
 import re
 from pathlib import Path
 
-d = Path(__file__).resolve().parent.parent / 'vendor' / 'csl'
+d = Path(__file__).resolve().parents[3] / 'js' / 'vendor' / 'csl'
 src = (d / 'apa.csl').read_text(encoding='utf-8')
 out = src
 

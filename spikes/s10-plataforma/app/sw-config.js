@@ -4,7 +4,7 @@
   'use strict';
 
   // Subir SHELL_VERSION en cada publicación que cambie un archivo del shell.
-  const SHELL_VERSION = 1;
+  const SHELL_VERSION = 2;
   // Los marcadores __...__ solo existen para que el servidor de pruebas simule una publicación nueva.
   const BUILD = '__BUILD_1__';
   // 'reload' salta la caché HTTP (Pages manda max-age=600). Ver README, sección SW.

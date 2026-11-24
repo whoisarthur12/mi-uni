@@ -1,6 +1,6 @@
 # ADR-003 — Tope de memoria del compresor por dispositivo
 
-- **Estado:** propuesta (modelo medido en escritorio; **se recalibra con el celular del dueño** antes de la Fase 2)
+- **Estado:** **aceptada** por el dueño (24-nov-2026). Modelo medido en escritorio; **se recalibra con el iPhone del dueño** antes de dar el Compresor por terminado (ADR-011).
 - **Contexto:** el dueño pidió definir qué hace la app en móvil con PDFs grandes. INSTRUCTIONS §2: no superar ~1/3 de la RAM y avisar antes de que el navegador cierre la pestaña.
 
 ## Mediciones (S1, Chromium headless, delta de RSS de todos los procesos del navegador)

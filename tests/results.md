@@ -55,3 +55,14 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S5 red | cabeceras enviadas | — | Origin sí; sin Referer ni cookies | — | — | los 3 | |
 | S5 CSP | fetch a example.com | connect-src con 3 hosts | ✅ bloqueado | — | — | los 3 | |
 | S5 XSS | título con img onerror / script / javascript: | sanitizador | ✅ eliminado | — | — | los 3 | |
+| S12 unir | 3 × sint-30mb [SINT] (79,7 MB, 18 p) | @cantoo, sin / con guardas | ✅ 18 p (pypdf + pdfium), guarda ok | 0,61–0,74/0,67–0,83 · 0,83–1,18/0,87–1,06 · 1,13–1,43/1,10–1,36 s | +239…324/+362…657 · +400…567/+452…467 · +584…622/+606…626 MB | Chromium 158 · Firefox 155 · WebKit 26.6 | Pico 3–8 × entrada; guarda 22–90 ms. (pdf-lib 1.17.1, commit 722223f: 0,78 / 0,98 / 1,43 s) |
+| S12 dividir | sint-100p [SINT] 30,7 MB en 100 | @cantoo + guarda por parte | ✅ 0 fallos | 0,36–0,60 / 0,50–0,63 / 0,53–0,63 s | — | los 3 | guarda 65–123 ms en total |
+| S12 miniaturas | sint-100p [SINT] | todas, escala 0,2 | ✅ mediana 33–34 ms/p | 3,2–3,5 / 3,4–3,8 / 4,2–4,3 s | +517…650 / +179…221 / +285…308 MB | los 3 | Bloqueo máx. 11–36 / 9–16 / **400–415** ms |
+| S12 miniaturas | sint-100p [SINT] | perezosas (≤ 120 px CSS, visibles, liberar) | ✅ al abrir 35 de 100; máx. 49 vivas | primera pantalla 1,3–1,4 / 1,4 / 2,0 s | +601…610 / +160…171 / +282…308 MB | los 3 | Ahorra tiempo, no memoria |
+| S12 miniaturas | unido 18 p de fotos 3000×4000 | todas / perezosas | ✅ | 4,1–4,9 / 5,9–6,4 / 5,6–6,1 s | +963…1.551/+866 · +485…522/+586 · +694…860/+677 MB (unir + miniaturas) | los 3 | Ruido de ±300 MB en Chromium |
+| S12 render | página 3000×4000 a 12 MP (×5) | pdf.js | ✅ pintado | 0,46 / 0,69 / 0,97 s | +145 / +237 / +374 MB | los 3 | WebKit bloquea 409 ms (commit 722223f) |
+| S12 cifrado | solo propietario, copiar página sin descifrar | opción prohibida | ❌ página en blanco sin error → la guarda la rechaza | — | — | los 3 (pdf-lib y @cantoo) | Prohibida en todo el repo (prueba de política) |
+| S12 cifrado | solo propietario | permiso No / Sí | ✅ No: intacto + alternativas · Sí: texto intacto, guarda ok | — | — | los 3 | |
+| S12 cifrado | contraseña de usuario | sin / incorrecta ×3 / correcta | ✅ rechazo claro / rechazo / abre, guarda ok | — | — | los 3 | Nunca se salta |
+| S12 formulario | sint-formulario [SINT] | rellenar texto + casilla | ✅ pypdf lee los valores | — | — | los 3 | |
+| S12 corrupto | PDF truncado a la mitad | @cantoo + guarda de entrada | ⚠️ @cantoo abre 30 p sin error (21 vacías) → guarda: «21 de 30 ilegibles», no se procesa; pdf.js `InvalidPDFException` | — | — | los 3 | |

@@ -37,6 +37,7 @@ export async function fromDOI(input, opts) {
 export async function fromISBN(input, opts) {
   const isbn = normalizeISBN(input);
   if (!isbn) throw Object.assign(new Error('Ese ISBN no es válido (revisa el dígito de control).'), { code: 'INVALID' });
+  // Fuente principal: Open Library. Google Books solo como respaldo SIN clave (decisión del dueño): puede fallar por cuota.
   const ol = await guardedFetch('openlibrary', isbn, opts).catch((e) => ({ __error: e }));
   const b = ol && !ol.__error && ol[`ISBN:${isbn}`];
   if (b) {
@@ -46,7 +47,7 @@ export async function fromISBN(input, opts) {
       fuente: 'Open Library', revisar: ['apellidos (compuestos)', 'editorial', 'edición'],
     };
   }
-  const g = await guardedFetch('googlebooks', isbn, opts);
+  const g = await guardedFetch('googlebooks', isbn, opts).catch((e) => { if (ol && ol.__error) throw ol.__error; return null; });
   const v = g && g.items && g.items[0] && g.items[0].volumeInfo;
   if (!v) { if (ol && ol.__error) throw ol.__error; return null; }
   const year = /\d{4}/.exec(v.publishedDate || '');

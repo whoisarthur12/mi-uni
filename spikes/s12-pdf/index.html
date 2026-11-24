@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S12 — pdf-lib y pdf.js</title>
+<link rel="stylesheet" href="../s10-plataforma/app/style.css">
+<link rel="stylesheet" href="./s12.css">
+<script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<h1>PDF: unir, miniaturas y render</h1>
+<p class="muted">Todo ocurre en el dispositivo. Elige uno o varios PDF tuyos. Con archivos grandes puede tardar o cerrar la pestaña: si pasa, anótalo.</p>
+<div class="row"><label for="files">PDFs</label> <input id="files" type="file" accept="application/pdf" multiple></div>
+<div class="row">
+  <button id="merge" type="button">Unir los elegidos</button>
+  <button id="save" type="button">Guardar el resultado</button>
+</div>
+<p id="msg" class="muted" role="status"></p>
+<div class="row">
+  <button id="lazyBtn" type="button">Miniaturas perezosas del primero</button>
+  <button id="lazyStats" type="button">Anotar tras desplazar</button>
+  <button id="thumbsBtn" type="button">Todas las miniaturas (referencia)</button>
+  <button id="renderBtn" type="button">Render grande (página 1, ×2)</button>
+</div>
+<div id="thumbs" class="thumbs"></div>
+<div class="row"><button id="copy" type="button">Copiar resultados</button> <span id="copied" hidden>Copiado.</span></div>
+<pre id="out"></pre>
+<dialog id="ask">
+  <form method="dialog">
+    <p id="askText"></p>
+    <p><input id="askPw" type="password" autocomplete="off" aria-label="Contraseña" hidden></p>
+    <button value="no">No</button> <button id="askYes" value="si">Sí</button>
+  </form>
+</dialog>
+</body>
+</html>

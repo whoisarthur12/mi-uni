@@ -198,9 +198,9 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 8. **Mermaid:** exportar a PNG puede fallar por etiquetas con `foreignObject` (contaminan el canvas); verificar la configuración que permite exportar bien.
 9. **Ecuaciones a Word:** pegar MathML en Word y su comportamiento varía; convertir LaTeX a OMML (formato nativo de Word) no es trivial y puede tener restricciones de licencia en herramientas de Microsoft. Plan B: exportar la ecuación como imagen (PNG/SVG).
 10. **CSL:** peso de los estilos y locales, comportamiento del procesador con las **variantes en español** (`es-ES`, `es-MX`, etc.) y licencia de los estilos.
-   - **✅ Resuelto (S5, ADR-008):** citeproc-js 2.4.63 (191 KB gzip, AGPL-3.0-or-later) + APA 13 KB + locale ~5 KB gzip; estilos CC BY-SA 3.0. Ningún locale oficial da APA en español (`es-ES`: guion en páginas; `es-MX`: "s/f", "6a ed."; ambos "&") → estilo derivado `apa-es.csl`, a validar con el reglamento de la universidad. Motor en worker (crear: 0,7–1,3 s).
+   - **✅ Resuelto (S5, ADR-008, aprobado):** citeproc-js 2.4.63 (191 KB gzip, AGPL-3.0-or-later) + APA 13 KB + locale ~5 KB gzip; estilos CC BY-SA 3.0. Ningún locale oficial da APA en español (`es-ES`: guion en páginas; `es-MX`: "s/f", "6a ed."; ambos "&") → estilo derivado `apa-es.csl`, **PROVISIONAL** (solo APA 7 en español; sin reglas de universidad hasta tener el reglamento). Motor en worker (crear: 0,7–1,3 s).
 11. **CORS de APIs de metadatos** (CrossRef por DOI, Open Library/Google Books por ISBN): confirmar que responden desde un navegador, sus límites y cuáles necesitan clave. **Obtener metadatos desde una URL cualquiera no es viable sin servidor** por CORS: ofrecer formulario manual.
-   - **✅ Resuelto (S5, ADR-007):** CrossRef y Open Library responden por CORS (`*`) desde el navegador en los 3 motores; Google Books sin clave dio 429 (cuota agotada) → solo respaldo. Única excepción del net-guard: 3 hosts, a petición del usuario, solo DOI/ISBN, sin Referer ni cookies.
+   - **✅ Resuelto (S5, ADR-007):** CrossRef y Open Library responden por CORS (`*`) desde el navegador en los 3 motores; Google Books sin clave dio 429 (cuota agotada) → ISBN solo por Open Library; Google Books respaldo **sin clave** (decisión del dueño). Entrada manual siempre disponible y autores editables antes de guardar. Única excepción del net-guard (ADR-007, aprobado; prueba `tests/policy/net-guard-scope.test.mjs`): 3 hosts, a petición del usuario, solo DOI/ISBN, sin Referer ni cookies.
 12. **Fórmulas de legibilidad en español** (Fernández-Huerta, Szigriszt-Pazos/INFLESZ): verificar coeficientes contra la fuente original antes de publicarlas, y la calidad del contador de sílabas.
 13. **`File System Access API`** solo existe en navegadores Chromium; hay que garantizar la alternativa (descarga clásica).
 14. **Wake Lock, `OffscreenCanvas`, módulos en Workers** y otras APIs: confirmar versiones mínimas de Safari iOS.
@@ -210,6 +210,8 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 16. **Proyectos con archivos grandes:** comportamiento al guardar *blobs* de decenas de MB en IndexedDB, rendimiento al exportar/importar un proyecto a ZIP de cientos de MB en celulares y si hace falta procesar por trozos.
    - **Fase 0 (S11):** 5–80 MB en IndexedDB y proyecto de 200 MB a ZIP e importado idéntico en los 3 motores (exportar < 1 s sin coste de memoria; importar 2,5–7,8 s, +280–640 MB de pico en escritorio). Bug de WebKit con `File.slice()` → copiar antes de guardar. iPhone pendiente (ADR-006).
 
+17. **pdf-lib / pdf.js (motor PDF compartido):** peso, uso sin build, PDFs cifrados y memoria al unir/renderizar.
+   - **Fase 0 (S12, ADR-010 aprobado 24-nov-2026):** @cantoo/pdf-lib 2.11.1 (252 KB gzip) + pdf.js 6.5.438 (≈ 661 KB gzip con wasm) funcionan sin build y con el worker aislado (ADR-004). Unir 3×28 MB: 0,6–1,2 s, pico +239 a +633 MB en escritorio (3–8 × entrada). Ignorar el cifrado deja páginas en blanco sin error → prohibido (prueba en `tests/policy/`). @cantoo abre PDFs truncados sin error → guarda de entrada. WebKit bloquea ~400 ms por página con fotos. iPhone y escaneos JBIG2/JPX reales pendientes; el factor de memoria 8× se recalibra en el iPhone.
 ---
 
 ## 8. Arquitectura
@@ -399,7 +401,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 **Qué hace.**
 - Guarda **un perfil del estudiante**: nombre completo, universidad, facultad/escuela, carrera, matrícula (opcional), ciudad, idioma.
 - Guarda **cursos/materias** del periodo: nombre, código, profesor, sección, periodo académico. Se pueden archivar al terminar el semestre.
-- Ofrece **valores por defecto**: tamaño de papel (Carta), estilo de cita preferido, fuente y tamaño habituales.
+- Ofrece **valores por defecto, configurables por el usuario**: tamaño de papel (Carta), **márgenes**, estilo de cita (por defecto **APA 7**, adaptación al español **provisional**, ADR-008), fuente y tamaño habituales. Las reglas propias de una universidad solo se añaden cuando el dueño entregue su reglamento: **no se inventan**.
 - Expone a los módulos una API simple: `ctx.profile.get()`, `ctx.profile.curso(id)` y suscripción a cambios.
 - **Autocompleta** portadas, portadas de cuaderno (plantillas), diapositiva de título (presentaciones) y las materias del armador de horarios.
 
@@ -509,7 +511,26 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 - **Imágenes → PDF** y **PDF → imágenes** (a un DPI elegido, descarga en ZIP).
 - **Metadatos:** ver, editar y limpiar.
 
-**Límites/riesgos.** `pdf-lib` no abre PDFs cifrados con contraseña (informar con claridad). Archivos grandes agotan la memoria del teléfono. La fidelidad al editar PDFs complejos tiene límites; avisar cuando una operación pueda alterar el documento.
+**PDFs cifrados (ADR-010, decisión del dueño 24-nov-2026).**
+- **Restricciones del propietario** (el PDF abre, pero su autor prohíbe modificarlo): se avisa y se pregunta «¿Es tuyo o tienes permiso para modificarlo?». Solo con un «Sí» explícito se procede, y se informa de que el resultado no conserva las restricciones. Sin confirmación no se toca, y se ofrecen alternativas: verlo y leerlo, o pedir al autor una copia sin restricciones.
+- **Contraseña de apertura:** se pide al usuario; nunca se intenta saltar ni adivinar.
+- Ver y hacer miniaturas no modifica el PDF y no requiere confirmación.
+
+**Guardas (ADR-010).**
+- **Entrada:** un PDF con páginas ilegibles (dañado o truncado) no se procesa: «El PDF está dañado: N de M páginas no se pueden leer».
+- **Salida:** todo resultado se reabre antes de entregarlo; debe tener el número de páginas esperado y ninguna página vacía cuya página de origen tuviera contenido. Si falla, no se entrega y se avisa; los originales nunca se modifican.
+
+**Memoria (ADR-003 extendido por ADR-010).**
+- Mismo presupuesto que el compresor (1/3 de la RAM, niveles ok / aviso / bloqueo, aprendizaje de cierres), con estimación provisional `pico ≈ 8 × entrada`.
+- En iPhone (3 GB supuestos): sin aviso hasta 64 MB de entrada, con aviso hasta 128 MB.
+- Se recalibra con el iPhone del dueño.
+
+**Miniaturas perezosas.**
+- Solo se dibujan las visibles, una a la vez.
+- Lado mayor ≤ 120 px CSS (≤ 240 px reales).
+- Las que salen de pantalla se liberan.
+
+**Límites/riesgos.** Archivos grandes agotan la memoria del teléfono. La fidelidad al editar PDFs complejos tiene límites; avisar cuando una operación pueda alterar el documento.
 
 **Aceptación.** Cada operación produce un PDF que abre correctamente en un visor externo; el reordenamiento por miniaturas es fluido con 100 páginas; los formularios simples se rellenan y guardan.
 
@@ -559,7 +580,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 **Qué hace.**
 - **Biblioteca personal** (IndexedDB): tipo de fuente (libro, capítulo, artículo, web, tesis, informe, video, etc.), autores, año, título, editorial/revista, volumen/número/páginas, DOI, URL, fecha de consulta, **notas** y **etiquetas**; agrupar por **proyecto/tarea**.
 - **Importar/exportar:** BibTeX, RIS y **CSL JSON**.
-- **Búsqueda de metadatos:** por **DOI** (CrossRef) y por **ISBN** (Open Library/Google Books), que **requieren internet**; el usuario las lanza explícitamente y la app lo indica. **Por URL: formulario manual** (no es posible leer páginas arbitrarias desde el navegador).
+- **Búsqueda de metadatos:** por **DOI** (CrossRef) y por **ISBN** (Open Library; Google Books solo como respaldo **sin clave**, ADR-007), que **requieren internet**; el usuario las lanza explícitamente y la app lo indica. **Por URL: formulario manual** (no es posible leer páginas arbitrarias desde el navegador). La **entrada manual** siempre está disponible y los **autores son editables** antes de guardar.
 - **Generar:** lista de **referencias/bibliografía** y **citas en el texto** (entre paréntesis y narrativa), en **APA 7** (principal) y otros estilos (IEEE, MLA, Chicago, Vancouver, Harvard…), con idioma español.
 - **Copiar con formato** (HTML enriquecido, para pegar en Word conservando cursivas) y exportar a `.docx`, `.md` y `.txt`.
 
@@ -769,7 +790,7 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 3. **Formatos de su universidad:** reglamento de portadas, márgenes, fuentes, estilo de cita exigido. Es la materia prima para plantillas fieles.
 4. **Dónde alojar los assets muy grandes** (LibreOffice WASM), si se decide incluirlo: troceado en GitHub Pages u otro alojamiento gratuito con CORS.
 5. **Escala de notas / calendario académico:** no aplica a esta lista, pero el armador de horarios necesita las **fechas de inicio y fin** del semestre para el `.ics`.
-6. **Dispositivos de prueba** del dueño (modelo de celular y navegador) para fijar presupuestos de rendimiento.
+6. **Dispositivos de prueba** del dueño (modelo de celular y navegador) para fijar presupuestos de rendimiento. *(24-nov-2026: iPhone con Safari; falta el modelo. Pendientes de dispositivo en `docs/fase0-resumen.md`.)*
 
 ---
 

@@ -89,6 +89,7 @@ async function renderModulo(id) {
   try {
     const mod = (await import(`../modules/${id}/index.js`)).default;
     current = mod; await mod.montar(out);
+    try { sessionStorage.setItem('s10:' + id, out.textContent); } catch { /* sin almacenamiento */ }
   } catch (e) {
     out.textContent = (navigator.onLine ? 'No se pudo cargar el módulo.' : 'Sin conexión y este módulo no está descargado. Descárgalo cuando tengas internet.') + ' (' + e.message + ')';
   }
@@ -128,9 +129,26 @@ async function render(route) {
   view.focus();
 }
 
+// «Copiar resultados»: estado del SW, cachés, modo de visualización y lo que mostraron los módulos.
+async function report() {
+  const get = (k) => { try { return sessionStorage.getItem(k); } catch { return null; } };
+  const r = {
+    ua: navigator.userAgent, ts: new Date().toISOString(), online: navigator.onLine,
+    instalada: matchMedia('(display-mode: standalone)').matches || navigator.standalone === true,
+    controlada: !!navigator.serviceWorker?.controller, esperando: !!(reg && reg.waiting),
+    sw: await loadState(), ligero: get('s10:ligero'), pesado: get('s10:pesado'), log, estado: $('#status').textContent,
+    almacenamiento: navigator.storage?.estimate ? await navigator.storage.estimate().catch(() => null) : null,
+  };
+  const text = JSON.stringify(r);
+  try { await navigator.clipboard.writeText(text); status('Resultados copiados.'); }
+  catch { $('#copied').hidden = false; $('#copied').textContent = text; status('No se pudo copiar: selecciona el texto de abajo.'); }
+  return r;
+}
+$('#copy').addEventListener('click', () => report());
+
 // Gancho de automatización del spike (no existirá en producción).
 window.__s10app = {
-  ready: null, log, checkUpdate, loadState,
+  ready: null, log, checkUpdate, loadState, report,
   state: async () => ({ route: view.dataset.route, controlled: !!navigator.serviceWorker.controller, waiting: !!(reg && reg.waiting), sw: await loadState(), banner: !$('#update').hidden, text: view.textContent }),
   download: (id, opts) => downloadUI(id, opts),
   estimate: () => (navigator.storage && navigator.storage.estimate ? navigator.storage.estimate() : null),

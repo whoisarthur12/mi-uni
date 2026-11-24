@@ -1,5 +1,5 @@
 // Envoltorio mínimo de citeproc-js (CSL). Lógica pura: funciona en Node y en el navegador (sin red).
-import CSL from '../vendor/citeproc-2.4.63/citeproc.mjs';
+import CSL from '../../../js/vendor/citeproc-2.4.63/citeproc.mjs';
 
 /**
  * styleXml: texto del .csl · locales: { 'es-ES': xml, 'en-US': xml, ... } · items: CSL-JSON (con id).
