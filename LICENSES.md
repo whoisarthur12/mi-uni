@@ -10,6 +10,7 @@ Proyecto: **AGPL-3.0-only** (obligado por Ghostscript; ver `CONTEXT.md` §6).
 | Estilos y locales CSL | CC BY-SA 3.0 | Sí (datos con licencia propia; atribución y misma licencia en derivados) | `apa-es.csl` derivado de `apa.csl`, también CC BY-SA 3.0; ver `js/vendor/csl/README.md` |
 | `@cantoo/pdf-lib` 2.11.1 | MIT | Sí | Ver «Código fuente correspondiente» abajo |
 | pdf.js (`pdfjs-dist` 6.5.438) | Apache-2.0; wasm OpenJPEG (BSD-2), JBIG2 de PDFium (BSD-3), qcms (MIT) | Sí (Apache-2.0 compatible con AGPL-3.0) | Ver «Código fuente correspondiente» abajo; licencias de los wasm en `js/vendor/pdfjs-6.5.438/wasm/` |
+| Inter 4.001 (fuente) | SIL Open Font License 1.1 | Sí (la OFL permite incluirla en software de cualquier licencia; no se vende sola) | Ver «Código fuente correspondiente» abajo |
 
 ## Código fuente correspondiente (AGPL §6 y §13)
 
@@ -91,5 +92,17 @@ Archivos de `pdfjs-dist` 6.5.438 **sin modificar** (`build/pdf.min.mjs`, `build/
 | wasm/LICENSE_PDFJS_OPENJPEG | `717fc62da03292dbb4dd0c8280bd4ce7bb8550dcf31d772bc93455fb50313425` |
 | wasm/LICENSE_PDFJS_QCMS | `508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1` |
 | wasm/LICENSE_QCMS | `36d847ae882f6574ebc72f56a4f354e4f104fde4a584373496482e97d52d31bc` |
+
+### Inter — `js/vendor/inter-4.001/` (ADR-013)
+`inter-latin-wght-normal.woff2`: subconjunto latino (U+0000–00FF y signos comunes) de la fuente variable Inter, eje `wght` 100–900, versión **4.001** (`git-66647c0bb`), **sin modificar**, tal como lo publica Fontsource. `OFL.txt` es la licencia del paquete.
+
+| Pieza | Fuente exacta | Verificación |
+|---|---|---|
+| Inter 4.001 | https://github.com/rsms/inter/tree/66647c0bbbe41a850d79d9c76fb13add3378940f (commit del que se compiló, 24-may-2024; antecesor del tag `v4.1`); copyright 2016 The Inter Project Authors | La tabla `name` de la fuente dice «Version 4.001;git-66647c0bb»; el commit existe y es antecesor de `v4.1` (comprobado con git) |
+| Paquete npm | https://registry.npmjs.org/@fontsource-variable/inter/-/inter-5.3.0.tgz — integridad `sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==` | `npm view @fontsource-variable/inter@5.3.0 dist.integrity` |
+
+SHA-256:
+- `inter-latin-wght-normal.woff2`: `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62`
+- `OFL.txt`: `3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345`
 
 La interfaz de la app enlazará a este archivo y al repositorio de Mi Uni (obligación de ofrecer el código a los usuarios que interactúan por red, AGPL §13).
