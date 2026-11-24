@@ -8,6 +8,8 @@ Proyecto: **AGPL-3.0-only** (obligado por Ghostscript; ver `CONTEXT.md` §6).
 | Ghostscript 10.06.0 vía `@okathira/ghostpdl-wasm` 1.1.0 | AGPL-3.0-or-later | Sí (obliga a AGPL en todo el proyecto) | Ver sección «Código fuente correspondiente» abajo; Artifex ofrece licencia comercial |
 | citeproc-js 2.4.63 | CPAL-1.0 **o** AGPL-3.0-or-later (a elección): **se usa AGPL-3.0-or-later** | Sí | Ver «Código fuente correspondiente» abajo |
 | Estilos y locales CSL | CC BY-SA 3.0 | Sí (datos con licencia propia; atribución y misma licencia en derivados) | `apa-es.csl` derivado de `apa.csl`, también CC BY-SA 3.0; ver `js/vendor/csl/README.md` |
+| `@cantoo/pdf-lib` 2.11.1 *(en evaluación, S12)* | MIT | Sí | Fuente: https://github.com/cantoo-scribe/pdf-lib/tree/c8c88e84dcd5510ec35921123bb5140fe02a7115 (`gitHead` del paquete npm) |
+| pdf.js (`pdfjs-dist` 6.5.438) *(en evaluación, S12)* | Apache-2.0; wasm OpenJPEG (BSD-2), JBIG2 de PDFium (BSD-3), qcms (MIT) | Sí (Apache-2.0 compatible con AGPL-3.0) | Fuente: https://github.com/mozilla/pdf.js/tree/0a4153349dc473ba950fc17941c5ca7eda43c1de (`gitHead`); licencias de los wasm en `spikes/s12-pdf/vendor/pdfjs-6.5.438/wasm/` |
 
 ## Código fuente correspondiente (AGPL §6 y §13)
 

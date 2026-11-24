@@ -55,3 +55,12 @@ Fixtures marcados `[SINT]` son sintéticos (generados), no reales. Dispositivo `
 | S5 red | cabeceras enviadas | — | Origin sí; sin Referer ni cookies | — | — | los 3 | |
 | S5 CSP | fetch a example.com | connect-src con 3 hosts | ✅ bloqueado | — | — | los 3 | |
 | S5 XSS | título con img onerror / script / javascript: | sanitizador | ✅ eliminado | — | — | los 3 | |
+| S12 unir | 3 × sint-30mb [SINT] (79,7 MB, 18 p) | pdf-lib / @cantoo | ✅ 18 p (pypdf + pdfium) | 0,78/0,61 · 0,98/1,00 · 1,43/1,19 s | +378/+313 · +445/+321 · +633/+577 MB | Chromium 158 · Firefox 155 · WebKit 26.6 | Pico 3,9–7,9 × entrada |
+| S12 dividir | sint-100p [SINT] 30,7 MB en 100 | pdf-lib | ✅ | 0,35 / 0,47 / 0,47 s | — | los 3 | |
+| S12 miniaturas | sint-100p [SINT] | escala 0,2 | ✅ mediana 33–34 ms/p | 3,5 / 3,6 / 4,3 s | +637 / +138 / +296 MB | los 3 | Bloqueo máx. 29 / 13 / **400** ms |
+| S12 miniaturas | unido 18 p de fotos 3000×4000 | escala 0,2 | ✅ | 4,5 / 6,2 / 6,0 s | +968 / +454 / +737 MB (unir + miniaturas) | los 3 | `<img>` en vez de canvas no reduce el pico |
+| S12 render | página 3000×4000 a 12 MP (×5) | pdf.js | ✅ pintado | 0,46 / 0,69 / 0,97 s | +145 / +237 / +374 MB | los 3 | WebKit bloquea 409 ms |
+| S12 cifrado | solo propietario, copiar página | ignoreEncryption | ❌ página en blanco sin error | — | — | los 3 (pdf-lib y @cantoo) | |
+| S12 cifrado | solo propietario / con contraseña | @cantoo `password` | ✅ texto intacto (pypdf, pdfium) | — | — | los 3 | |
+| S12 formulario | sint-formulario [SINT] | rellenar texto + casilla | ✅ pypdf lee los valores | — | — | los 3 | |
+| S12 corrupto | PDF truncado | — | error claro en pdf-lib y pdf.js | — | — | los 3 | |

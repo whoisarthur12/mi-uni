@@ -210,6 +210,8 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
 16. **Proyectos con archivos grandes:** comportamiento al guardar *blobs* de decenas de MB en IndexedDB, rendimiento al exportar/importar un proyecto a ZIP de cientos de MB en celulares y si hace falta procesar por trozos.
    - **Fase 0 (S11):** 5–80 MB en IndexedDB y proyecto de 200 MB a ZIP e importado idéntico en los 3 motores (exportar < 1 s sin coste de memoria; importar 2,5–7,8 s, +280–640 MB de pico en escritorio). Bug de WebKit con `File.slice()` → copiar antes de guardar. iPhone pendiente (ADR-006).
 
+17. **pdf-lib / pdf.js (motor PDF compartido):** peso, uso sin build, PDFs cifrados y memoria al unir/renderizar.
+   - **Fase 0 (S12, ADR-010 propuesto):** @cantoo/pdf-lib 2.11.1 (252 KB gzip) + pdf.js 6.5.438 (≈ 661 KB gzip con wasm) funcionan sin build y con el worker aislado (ADR-004). Unir 3×28 MB: 0,6–1,4 s, pico +313 a +633 MB en escritorio (3,9–7,9 × entrada). `ignoreEncryption` deja páginas en blanco sin error → prohibido. WebKit bloquea ~400 ms por página con fotos. iPhone y escaneos JBIG2/JPX reales pendientes.
 ---
 
 ## 8. Arquitectura
