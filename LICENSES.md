@@ -8,8 +8,8 @@ Proyecto: **AGPL-3.0-only** (obligado por Ghostscript; ver `CONTEXT.md` §6).
 | Ghostscript 10.06.0 vía `@okathira/ghostpdl-wasm` 1.1.0 | AGPL-3.0-or-later | Sí (obliga a AGPL en todo el proyecto) | Ver sección «Código fuente correspondiente» abajo; Artifex ofrece licencia comercial |
 | citeproc-js 2.4.63 | CPAL-1.0 **o** AGPL-3.0-or-later (a elección): **se usa AGPL-3.0-or-later** | Sí | Ver «Código fuente correspondiente» abajo |
 | Estilos y locales CSL | CC BY-SA 3.0 | Sí (datos con licencia propia; atribución y misma licencia en derivados) | `apa-es.csl` derivado de `apa.csl`, también CC BY-SA 3.0; ver `js/vendor/csl/README.md` |
-| `@cantoo/pdf-lib` 2.11.1 *(en evaluación, S12)* | MIT | Sí | Fuente: https://github.com/cantoo-scribe/pdf-lib/tree/c8c88e84dcd5510ec35921123bb5140fe02a7115 (`gitHead` del paquete npm) |
-| pdf.js (`pdfjs-dist` 6.5.438) *(en evaluación, S12)* | Apache-2.0; wasm OpenJPEG (BSD-2), JBIG2 de PDFium (BSD-3), qcms (MIT) | Sí (Apache-2.0 compatible con AGPL-3.0) | Fuente: https://github.com/mozilla/pdf.js/tree/0a4153349dc473ba950fc17941c5ca7eda43c1de (`gitHead`); licencias de los wasm en `spikes/s12-pdf/vendor/pdfjs-6.5.438/wasm/` |
+| `@cantoo/pdf-lib` 2.11.1 | MIT | Sí | Ver «Código fuente correspondiente» abajo |
+| pdf.js (`pdfjs-dist` 6.5.438) | Apache-2.0; wasm OpenJPEG (BSD-2), JBIG2 de PDFium (BSD-3), qcms (MIT) | Sí (Apache-2.0 compatible con AGPL-3.0) | Ver «Código fuente correspondiente» abajo; licencias de los wasm en `js/vendor/pdfjs-6.5.438/wasm/` |
 
 ## Código fuente correspondiente (AGPL §6 y §13)
 
@@ -55,5 +55,41 @@ Sin modificar, salvo `apa-es.csl` (derivado generado por `spikes/s5-citas/tools/
 | locales-es-MX.xml | `2287c429cb73361034d3d1dc03a6a5444c5e4cd322d08a3b1e06854aa4c35477` |
 | locales-es-CL.xml | `3e25e64d5f872dc139182ca71c142d97c863c0c709d58b87c8467f86b6acfe30` |
 | locales-en-US.xml | `ac864c7c21166b4390d82c31792cdc509400727fa0060b43d8aa17e07f9cb079` |
+
+### @cantoo/pdf-lib — `js/vendor/cantoo-pdf-lib-2.11.1/` (ADR-010)
+`pdf-lib.esm.min.js` es `dist/pdf-lib.esm.min.js` del paquete npm, **sin modificar**.
+
+| Pieza | Fuente exacta | Verificación |
+|---|---|---|
+| Paquete npm **2.11.1** (15-sep-2026) | https://registry.npmjs.org/@cantoo/pdf-lib/-/pdf-lib-2.11.1.tgz — integridad `sha512-lYuRJFfXgoP8WVE8HYSeoLfDcnSXmjMLmdZS7YvmYHngbcZfiqDOruHrZBqjYizkrNa4ad1yW4WCrPYyb26T3Q==`. **El tarball incluye el código fuente TypeScript (`src/`, 316 archivos)**: es la fuente exacta de esta versión | `dist/pdf-lib.esm.min.js` del tarball tiene el mismo SHA-256 que el vendorizado (comprobado) |
+| Repositorio | https://github.com/cantoo-scribe/pdf-lib | El `gitHead` declarado (`c8c88e84dcd5510ec35921123bb5140fe02a7115`) **no está publicado** (GitHub: «not our ref»); último tag público `v2.9.2`; `master` `e2c09ed` (18-nov-2026) declara 2.11.0. Riesgo anotado en ADR-010 |
+
+SHA-256:
+- `pdf-lib.esm.min.js`: `ac197f002ca7b6f7789334be108ee13a97928b561eafa774d303d43bb7dd7fd1`
+- `LICENSE.md`: `f2c9fc00fdb66eb99ac156ba52d734af66d8d309f65753ae809ad34ee2883bcb`
+
+### pdf.js — `js/vendor/pdfjs-6.5.438/` (ADR-010)
+Archivos de `pdfjs-dist` 6.5.438 **sin modificar** (`build/pdf.min.mjs`, `build/pdf.worker.min.mjs`, `wasm/`, `LICENSE`).
+
+| Pieza | Fuente exacta | Verificación |
+|---|---|---|
+| pdf.js **6.5.438** | https://github.com/mozilla/pdf.js/tree/v6.5.438 — tag `v6.5.438`, commit `0a4153349dc473ba950fc17941c5ca7eda43c1de` | El tag apunta al `gitHead` del paquete npm (comprobado con `git ls-remote`) |
+| Paquete npm | https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.5.438.tgz — integridad `sha512-vg8Pw1x+AFKy4AMDvhuWl5cOYV8d698UoEANoFFhc79hqXDnZQqnOXoxw3HG907WHOg1JYOvLhP756boddFxpA==` | `npm view pdfjs-dist@6.5.438 dist.integrity` |
+| wasm (OpenJPEG, JBIG2 de PDFium, qcms) | Compilados por Mozilla desde el mismo tag; licencias y avisos en `wasm/LICENSE_*` | — |
+
+| Archivo | SHA-256 |
+|---|---|
+| pdf.min.mjs | `3a88402882cfa3e7e72c2c9b5149f52f0f88baf1c5b62aa11a41abdbc2072440` |
+| pdf.worker.min.mjs | `1e64c8240e54735ec5913b37acd5134747799cb8c6bb3777c70adbc01232d2aa` |
+| LICENSE | `0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594` |
+| wasm/jbig2.wasm | `466f45c2a61a698152fb5400c27e56ff2ceb73dcb71fde3fc366a502308eaab0` |
+| wasm/openjpeg.wasm | `7ea4b2b04613370ad4e9c1162da750cc88b4b176eac0d0c164b3caff23fc0a46` |
+| wasm/qcms_bg.wasm | `663d86126d5f5fcb1c61490f94353e2a8375660b8c5498ab3ebab5a34b08800e` |
+| wasm/LICENSE_JBIG2 | `9e66b7f1b934a28b37f3bc4dac97915de1674271e79a0a88182a18ed9731b4d1` |
+| wasm/LICENSE_OPENJPEG | `a6af136f3e15038a666b61f376612a07d9a4e48cb7c01adbf3e33b3f14ab49b6` |
+| wasm/LICENSE_PDFJS_JBIG2 | `aad3cce09842e00e9e11ad5e8fef8cc02fbc3a3768fe2f007443b9cee37aaee5` |
+| wasm/LICENSE_PDFJS_OPENJPEG | `717fc62da03292dbb4dd0c8280bd4ce7bb8550dcf31d772bc93455fb50313425` |
+| wasm/LICENSE_PDFJS_QCMS | `508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1` |
+| wasm/LICENSE_QCMS | `36d847ae882f6574ebc72f56a4f354e4f104fde4a584373496482e97d52d31bc` |
 
 La interfaz de la app enlazará a este archivo y al repositorio de Mi Uni (obligación de ofrecer el código a los usuarios que interactúan por red, AGPL §13).

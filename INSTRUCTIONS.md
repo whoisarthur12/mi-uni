@@ -161,7 +161,14 @@ Construir la base sobre la que se apoyan todos los módulos.
 Orden: **motor PDF compartido → Compresor → Caja PDF** (el compresor resuelve la necesidad más urgente del dueño). El Escáner pasa a la Fase 4, tras el hito MVP.
 
 **2.1 Motor PDF compartido (`engines/pdf`, `engines/image`, `engines/target-search`)**
-- Envoltorios de `pdf-lib` y `pdf.js` (abrir, miniaturas, render a canvas/`OffscreenCanvas`, ensamblar).
+- Envoltorios de `@cantoo/pdf-lib` 2.11.1 y `pdf.js` 6.5.438 (ADR-010): abrir, miniaturas, render a canvas/`OffscreenCanvas`, ensamblar. **Ningún módulo importa pdf-lib ni pdf.js directamente**: solo `engines/pdf`, para poder cambiar de motor tocando un único archivo (plan de reemplazo del fork en ADR-010).
+- Partir del spike S12:
+  - `pdf-open.js`: apertura con permiso y contraseña; opciones de carga en lista blanca;
+  - `output-guard.js`: guarda de entrada y de salida;
+  - `pdf-memory.js`: tope de memoria 8×, provisional;
+  - las miniaturas perezosas de `main.js`.
+  Las pruebas de `spikes/s12-pdf/test/` pasan a ser pruebas del motor.
+- Prohibido ignorar el cifrado de un PDF: `tests/policy/no-ignore-encryption.test.mjs` debe pasar siempre.
 - Carga de imágenes con **reducción inmediata** (lado largo máximo configurable) y respeto del tope de canvas de iOS.
 - `target-search`: **búsqueda genérica de tamaño objetivo** — recibe una función `probar(nivel) → bytes` y devuelve el mejor nivel que cumpla, con búsqueda binaria, máximo de iteraciones y detección de no monotonía. Lo reutilizan el compresor y el escáner.
 
@@ -180,9 +187,10 @@ Orden: **motor PDF compartido → Compresor → Caja PDF** (el compresor resuelv
 
 **2.3 Caja de herramientas PDF** (spec §9.3)
 - Unir, dividir (rangos / cada N / por tamaño), organizar con miniaturas (arrastrar, borrar, rotar, duplicar, extraer), numerar páginas, marca de agua, firmar (firmas guardadas localmente), rellenar formularios, imágenes↔PDF, metadatos.
-- Mensajes claros para PDFs cifrados y para límites de memoria.
+- PDFs cifrados según CONTEXT §9.3 (confirmación «¿es tuyo o tienes permiso?» para restricciones del propietario; contraseña de apertura pedida, nunca saltada). Mensajes claros para límites de memoria (ADR-003 + ADR-010).
+- **Guarda de entrada y de salida en toda operación que escriba un PDF.** Si falla, no se entrega y se avisa.
 
-*Aceptación:* cada operación genera un PDF que abre bien en un visor externo; reordenar 100 páginas por miniaturas es fluido; formularios simples se rellenan y guardan.
+*Aceptación:* cada operación genera un PDF que pasa la guarda y abre bien en un visor externo; reordenar 100 páginas por miniaturas es fluido; formularios simples se rellenan y guardan.
 
 **Atajos entre módulos de esta fase:** Caja PDF→Compresor, "Dividir en partes" desde el Compresor (mediante el núcleo, sin acoplar módulos). El atajo Escáner→Compresor se añade en la Fase 4.
 

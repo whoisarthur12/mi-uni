@@ -144,8 +144,9 @@ node spikes/s10-plataforma/runner/s10install.cjs
 
 ### 6. S12 · PDF
 1. Abre `…/spikes/s12-pdf/` y elige 2 o 3 PDFs pesados tuyos (no salen del teléfono).
-2. Pulsa «Unir los elegidos». Si la pestaña se recarga sola, anota el tamaño total de los archivos.
-3. Pulsa «Miniaturas del primero» y luego «Render grande».
-4. Pulsa **«Copiar resultados»**.
+2. Pulsa «Unir los elegidos». Si un PDF tiene restricciones, saldrá la pregunta «¿Es tuyo o tienes permiso?»: prueba «No» (no debe tocarlo) y luego «Sí». Si la pestaña se recarga sola, anota el tamaño total de los archivos.
+3. Pulsa «Guardar el resultado» y ábrelo en Archivos para comprobar que no hay páginas en blanco.
+4. Pulsa «Miniaturas perezosas del primero», desplaza la lista hasta el final y pulsa «Anotar tras desplazar». Luego pulsa «Render grande».
+5. Pulsa **«Copiar resultados»**.
 
 Todo lo anterior queda **pendiente de dispositivo** hasta recibir tus resultados.

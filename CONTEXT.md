@@ -211,7 +211,7 @@ Este documento fue elaborado con investigación parcial. **Trata esta lista como
    - **Fase 0 (S11):** 5–80 MB en IndexedDB y proyecto de 200 MB a ZIP e importado idéntico en los 3 motores (exportar < 1 s sin coste de memoria; importar 2,5–7,8 s, +280–640 MB de pico en escritorio). Bug de WebKit con `File.slice()` → copiar antes de guardar. iPhone pendiente (ADR-006).
 
 17. **pdf-lib / pdf.js (motor PDF compartido):** peso, uso sin build, PDFs cifrados y memoria al unir/renderizar.
-   - **Fase 0 (S12, ADR-010 propuesto):** @cantoo/pdf-lib 2.11.1 (252 KB gzip) + pdf.js 6.5.438 (≈ 661 KB gzip con wasm) funcionan sin build y con el worker aislado (ADR-004). Unir 3×28 MB: 0,6–1,4 s, pico +313 a +633 MB en escritorio (3,9–7,9 × entrada). `ignoreEncryption` deja páginas en blanco sin error → prohibido. WebKit bloquea ~400 ms por página con fotos. iPhone y escaneos JBIG2/JPX reales pendientes.
+   - **Fase 0 (S12, ADR-010 aprobado 24-nov-2026):** @cantoo/pdf-lib 2.11.1 (252 KB gzip) + pdf.js 6.5.438 (≈ 661 KB gzip con wasm) funcionan sin build y con el worker aislado (ADR-004). Unir 3×28 MB: 0,6–1,2 s, pico +239 a +633 MB en escritorio (3–8 × entrada). Ignorar el cifrado deja páginas en blanco sin error → prohibido (prueba en `tests/policy/`). @cantoo abre PDFs truncados sin error → guarda de entrada. WebKit bloquea ~400 ms por página con fotos. iPhone y escaneos JBIG2/JPX reales pendientes; el factor de memoria 8× se recalibra en el iPhone.
 ---
 
 ## 8. Arquitectura
@@ -511,7 +511,26 @@ Se descarta la telemetría remota. En su lugar, un **registro local** pensado pa
 - **Imágenes → PDF** y **PDF → imágenes** (a un DPI elegido, descarga en ZIP).
 - **Metadatos:** ver, editar y limpiar.
 
-**Límites/riesgos.** `pdf-lib` no abre PDFs cifrados con contraseña (informar con claridad). Archivos grandes agotan la memoria del teléfono. La fidelidad al editar PDFs complejos tiene límites; avisar cuando una operación pueda alterar el documento.
+**PDFs cifrados (ADR-010, decisión del dueño 24-nov-2026).**
+- **Restricciones del propietario** (el PDF abre, pero su autor prohíbe modificarlo): se avisa y se pregunta «¿Es tuyo o tienes permiso para modificarlo?». Solo con un «Sí» explícito se procede, y se informa de que el resultado no conserva las restricciones. Sin confirmación no se toca, y se ofrecen alternativas: verlo y leerlo, o pedir al autor una copia sin restricciones.
+- **Contraseña de apertura:** se pide al usuario; nunca se intenta saltar ni adivinar.
+- Ver y hacer miniaturas no modifica el PDF y no requiere confirmación.
+
+**Guardas (ADR-010).**
+- **Entrada:** un PDF con páginas ilegibles (dañado o truncado) no se procesa: «El PDF está dañado: N de M páginas no se pueden leer».
+- **Salida:** todo resultado se reabre antes de entregarlo; debe tener el número de páginas esperado y ninguna página vacía cuya página de origen tuviera contenido. Si falla, no se entrega y se avisa; los originales nunca se modifican.
+
+**Memoria (ADR-003 extendido por ADR-010).**
+- Mismo presupuesto que el compresor (1/3 de la RAM, niveles ok / aviso / bloqueo, aprendizaje de cierres), con estimación provisional `pico ≈ 8 × entrada`.
+- En iPhone (3 GB supuestos): sin aviso hasta 64 MB de entrada, con aviso hasta 128 MB.
+- Se recalibra con el iPhone del dueño.
+
+**Miniaturas perezosas.**
+- Solo se dibujan las visibles, una a la vez.
+- Lado mayor ≤ 120 px CSS (≤ 240 px reales).
+- Las que salen de pantalla se liberan.
+
+**Límites/riesgos.** Archivos grandes agotan la memoria del teléfono. La fidelidad al editar PDFs complejos tiene límites; avisar cuando una operación pueda alterar el documento.
 
 **Aceptación.** Cada operación produce un PDF que abre correctamente en un visor externo; el reordenamiento por miniaturas es fluido con 100 páginas; los formularios simples se rellenan y guardan.
 
